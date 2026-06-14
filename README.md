@@ -1,11 +1,11 @@
 # Automaturge · Research & Methods for Applied Robotics
 
-Repositório de infraestrutura de conhecimento da **Automaturge**.
+A **Automaturge** é uma iniciativa de pesquisa e desenvolvimento de métodos para robótica aplicada — produz métodos práticos de automação robótica e os estudos técnicos que os fundamentam.
 
-Este repositório não é um produto nem uma biblioteca de código genérico. É a **base operacional** do pipeline de coleta automatizada de dados técnicos — contém as ferramentas, templates e instruções que os agentes de IA utilizam para executar, validar e entregar dossiers de dados em robótica industrial.
+Este repositório contém a **infraestrutura do pipeline de coleta de dados** que a Automaturge usa como instrumento de pesquisa: padrões de metodologia, templates de estruturação de dados, prompts dos agentes de IA e contratos de ferramentas. É uma ferramenta da Automaturge — não o produto dela.
 
-> **A Automaturge reúne dados técnicos. Não produz estudos.**
-> "Uma pesquisa reúne dados. Um estudo conclui algo."
+> **O pipeline reúne dados técnicos. A Automaturge conclui algo com eles.**
+> "Uma pesquisa reúne dados. Um método ensina como usá-los."
 
 ---
 
@@ -57,7 +57,7 @@ O Ordenador lê os dois templates correspondentes antes de construir o brief. As
 
 | Tag | O que é coletado |
 |---|---|
-| `parametros-componente` | Payload, alcance, torque, parâmetros DH, IP |
+| `parametros-componente` | Especificações técnicas de qualquer componente (geometria, faixa operacional, interfaces, desempenho declarado) |
 | `interfaces-compatibilidade` | Protocolos, pinout, I/O entre componentes |
 | `software-firmware` | Versões, SDKs, URCaps, changelogs de API |
 | `dados-geometricos` | CAD/STEP/URDF, envelope de trabalho |
