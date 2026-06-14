@@ -1,43 +1,43 @@
-# solucoes-mercado — Tipo de Dado
+# Tipo de Dado: `solucoes-mercado`
 
-## Descrição
-Catálogo de produtos e soluções comercialmente disponíveis que atendem a uma função técnica específica. Registra o que existe no mercado, com especificações básicas e disponibilidade — sem avaliação, ranking ou recomendação.
+## Natureza
 
-## Campos a coletar
+Catálogo de **produtos e soluções comercialmente disponíveis** que atendem a uma função técnica específica. Registra o que existe no mercado — sem avaliação, ranking ou recomendação entre produtos.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Nome do produto | S | Texto | Nome comercial oficial |
-| Fabricante | S | Texto | — |
-| Modelo / SKU | S | Texto | — |
-| Categoria / função | S | Texto | Ex: "Cobot 6-DOF payload 10 kg" |
-| Especificações-chave | S | Lista | Os parâmetros mais relevantes para a função (3-5 specs) |
-| Disponibilidade geográfica | N | Texto | Brasil / América do Sul / Global |
-| Distribuidor no Brasil | N | Texto | Se identificado — nome + site |
-| Status comercial | S | Texto | Disponível / Descontinuado / Anunciado / Fim de produção |
-| Data da consulta | S | Data | — |
-| URL do produto | S | URL | Página oficial do fabricante |
+Todo dado deste tipo responde à pergunta: "quais produtos estão disponíveis comercialmente para executar esta função?"
 
-## Fontes válidas (em ordem de prioridade)
-1. Site oficial do fabricante (página do produto)
-2. Portal de distribuidores autorizados com informações verificáveis
-3. Catálogo técnico oficial do fabricante (PDF datado)
-4. Base de dados setorial (ABIMAQ, IFR, Tecnomatix market data — apenas para existência, não specs)
+A função pode ser qualquer coisa: cobot para paletização, sensor de força para montagem, válvula proporcional para vácuo, software de simulação. O tipo não é específico a nenhum domínio — aplica-se a qualquer função técnica para a qual exista oferta de mercado.
+
+## Critérios de qualidade
+
+- **Função declarada explicitamente** — o catálogo deve declarar qual função está sendo coberta (sem isso, a coleção não tem critério de inclusão)
+- **Status comercial verificado** — disponível, descontinuado, anunciado — verificado na data de consulta
+- **Data de consulta registrada** — disponibilidade muda
+- **Especificações de fonte OEM** — não de distribuidores ou e-commerce
+- **Sem ranking** — não há coluna de preferência, pontuação ou recomendação
+
+## Fontes válidas
+
+- Site oficial do fabricante (página do produto)
+- Catálogo técnico oficial do fabricante com data
+- Portal de distribuidores autorizados com especificações verificáveis
+- Bases de dados setoriais para existência de produtos (não para especificações)
 
 ## Fontes inválidas
-- Sites de e-commerce (Mercado Livre, Amazon — specs podem estar incorretas)
+
+- Sites de e-commerce (Amazon, Mercado Livre — specs podem estar incorretas)
 - Comparativos de terceiros sem link para fonte primária
 - Notícias sobre produtos não lançados sem anúncio oficial do fabricante
 
-## Regras de qualidade
-- Especificações-chave devem ser as mais relevantes para a função descrita na tarefa — não todos os campos do datasheet
-- Disponibilidade no Brasil deve ser verificada: muitos produtos têm disponibilidade global mas sem suporte local
-- Status "Disponível" deve ser confirmado na data de consulta — linha de produto pode ser encerrada
-- Não incluir preço: preços variam e não são dados técnicos
-- Não ordenar por preferência — ordenar alfabeticamente ou por fabricante
-- Dados ausentes: `NULL-MISSING`
+## Limites com outros tipos
 
-## Armadilhas comuns
-- Produtos OEM podem ter modelos com nomes diferentes por região — verificar se são o mesmo produto
-- "Disponível globalmente" não significa estoque imediato no Brasil — verificar prazo com distribuidor
-- Fabricantes frequentemente lançam sucessores sem descontinuar formalmente o modelo anterior — registrar ambos se encontrados
+- **Não é `parametros-componente`:** especificações técnicas detalhadas de um produto específico selecionado vão em `parametros-componente`. Este tipo coleta o panorama de mercado — quais existem e specs básicas para comparação.
+- **Não é `fornecedores-integradores`:** quem vende ou integra os produtos vão em `fornecedores-integradores`. Este tipo coleta os produtos em si.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base na função e na tarefa. Exemplos:
+
+- Para catálogo de cobots até 10 kg: fabricante, modelo, payload, alcance, IP, status comercial, URL
+- Para catálogo de garras de vácuo para paletização: fabricante, modelo, faixa de produtos suportados, configurações disponíveis, status
+- Para catálogo de software de simulação robótica: nome, fabricante, plataformas suportadas, tipo de licença, versão atual

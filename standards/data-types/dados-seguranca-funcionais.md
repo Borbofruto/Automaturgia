@@ -1,44 +1,44 @@
-# dados-seguranca-funcionais — Tipo de Dado
+# Tipo de Dado: `dados-seguranca-funcionais`
 
-## Descrição
-Parâmetros de segurança funcional documentados de um sistema robótico ou componente: zonas de segurança, Performance Level (PL), Safety Integrity Level (SIL), funções de parada, monitoramentos de segurança. Coleta apenas o que está documentado em fontes formais — nunca deriva ou extrapola valores de segurança.
+## Natureza
 
-## Campos a coletar
+Parâmetros de **segurança funcional** documentados em fontes formais: Performance Level (PL), Safety Integrity Level (SIL), funções de parada, zonas de segurança, monitoramentos. Coleta apenas o que está explicitamente documentado — nunca deriva, extrapola ou estima valores de segurança.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Componente / sistema | S | Texto | Fabricante + modelo + versão |
-| Função de segurança | S | Texto | Ex: "Parada de emergência", "Monitoramento de velocidade segura" |
-| Performance Level (PL) | N | Texto | PLa a PLe, conforme EN ISO 13849-1 |
-| SIL | N | Texto | SIL 1-3, conforme IEC 62061 |
-| Categoria (EN ISO 13849-1) | N | Texto | Cat. 1, 2, 3 ou 4 |
-| Categoria de parada (IEC 60204-1) | N | Texto | Cat. 0, 1 ou 2 |
-| Zona de segurança | N | Texto | Zona colaborativa, zona restrita, espaço protegido — conforme ISO/TS 15066 |
-| Parâmetros de monitoramento | N | Tabela | Parâmetro, limite, unidade, norma de referência |
-| Tempo de resposta / reação | N | ms | Tempo de reação do sistema de segurança |
-| Norma de referência | S | Texto | ISO 10218-1/2, ISO/TS 15066, EN ISO 13849-1, IEC 62061 |
-| Fonte | S | Texto + ref | Manual de segurança, relatório de avaliação de risco, certificado |
-| Data do documento fonte | S | Data | — |
+Todo dado deste tipo responde à pergunta: "o que foi formalmente documentado sobre a segurança funcional deste sistema ou componente, e por qual fonte?"
 
-## Fontes válidas (em ordem de prioridade)
-1. Manual de segurança oficial do fabricante (com número de revisão)
-2. Relatório de avaliação de risco documentado (com metodologia)
-3. Certificado de conformidade de organismo notificado para a função de segurança específica
-4. Application note de segurança oficial do fabricante
+Este é o tipo com maior restrição de fonte da Automaturge. Qualquer valor de segurança sem fonte formal documentada recebe `NULL-MISSING` — não existe `nao-verificavel` como substituto para PL ou SIL não documentado.
+
+## Critérios de qualidade
+
+- **Função de segurança especificada** — PL e SIL são propriedades de funções específicas, não do produto como um todo. Campo inválido sem a função declarada.
+- **Norma de referência** — qual norma define o parâmetro coletado (ISO 13849-1, IEC 62061, ISO/TS 15066, etc.)
+- **Fonte formal identificada** — manual de segurança, relatório de avaliação de risco, certificado de organismo notificado
+- **Versão do documento** — parâmetros de segurança podem mudar entre revisões
+
+## Fontes válidas
+
+- Manual de segurança oficial do fabricante com número de revisão
+- Relatório de avaliação de risco documentado com metodologia
+- Certificado de conformidade de organismo notificado para a função de segurança específica
+- Application note de segurança oficial do fabricante
 
 ## Fontes inválidas
-- Inferências a partir de protocolos de comunicação ("usa Profisafe, então é SIL 2")
-- Declarações de marketing ou comerciais ("robô colaborativo seguro")
+
+- Inferências a partir de protocolos de comunicação ("usa PROFIsafe, então é SIL 2")
+- Declarações de marketing ou comerciais ("seguro para trabalho colaborativo")
 - Valores calculados sem metodologia documentada
+- Estimativas baseadas em produtos similares
 
-## Regras de qualidade
-- NUNCA derivar PL ou SIL a partir de características técnicas do produto — apenas registrar o que está formalmente documentado
-- PL e SIL são propriedades de funções de segurança específicas, não do produto como um todo — sempre especificar para qual função
-- Zona colaborativa ISO/TS 15066 requer avaliação de risco para o uso específico — o que o fabricante documenta é capacidade, não autorização para uso colaborativo
-- Parâmetros de monitoramento: sempre incluir a norma ou especificação que define o limite
-- Dados ausentes: `NULL-MISSING` — nunca estimar valores de segurança
+## Limites com outros tipos
 
-## Armadilhas comuns
-- "Cobot" não implica ausência de risco ou dispensa de avaliação de risco — registrar apenas o que está documentado
-- PL de componente ≠ PL do sistema — a integração pode reduzir o nível de desempenho
-- ISO/TS 15066 foi substituída por ISO TS 15066:2016; verificar se há atualização posterior em andamento
+- **Não é `conformidade-certificados`:** o certificado que atesta a segurança funcional vai em `conformidade-certificados`. Os parâmetros de segurança declarados no manual vão aqui.
+- **Não é `normas-regulamentacoes`:** as normas de segurança (ISO 13849-1, IEC 62061) vão em `normas-regulamentacoes`. Os valores de PL/SIL de um produto específico vão aqui.
+- **Não é `processos-procedimentos`:** o procedimento de configuração de zona de segurança vai em `processos-procedimentos`. Os parâmetros resultantes documentados vão aqui.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base no sistema e na tarefa. Exemplos:
+
+- Para função de parada de emergência de cobot: função de segurança, PL alcançado, norma de referência (ISO 13849-1), categoria de parada (IEC 60204-1), tempo de reação, fonte + revisão
+- Para zona colaborativa: dimensões, velocidade máxima monitorada, força máxima monitorada, norma de referência (ISO/TS 15066), configuração declarada pelo fabricante
+- Para monitoramento de velocidade segura: parâmetro, limite, unidade, norma que define o limite, fonte

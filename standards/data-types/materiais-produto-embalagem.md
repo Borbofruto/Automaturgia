@@ -1,4 +1,10 @@
-# Tipo de Dado: `materiais-produto-embalagem`
+# DEPRECIADO: `materiais-produto-embalagem`
+
+> Este arquivo foi depreciado. Arquivos de tipo de dado domain-specific não pertencem em `standards/data-types/`.
+>
+> **Use no lugar:** `parametros-componente` para as características físicas e de superfície do produto/embalagem como objeto a ser manipulado. O Ordenador determina os campos relevantes para o contexto (dimensões, massa, material de superfície, permeabilidade ao ar, etc.) com base na tarefa.
+>
+> Execute `git rm standards/data-types/materiais-produto-embalagem.md` para remover este arquivo do repositório.
 
 ## Descrição
 

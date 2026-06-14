@@ -1,44 +1,44 @@
-# dados-conectividade-comunicacao — Tipo de Dado
+# Tipo de Dado: `dados-conectividade-comunicacao`
 
-## Descrição
-Dados sobre redes, protocolos e endereçamento de um componente ou sistema: o que ele suporta, como está configurado, quais parâmetros de comunicação estão definidos. Documenta o estado configurado ou a capacidade declarada pelo fabricante — não infere configurações a partir de protocolos comuns.
+## Natureza
 
-## Campos a coletar
+Dados sobre **redes, protocolos e topologia de comunicação** de um componente, sistema ou infraestrutura de rede. Documenta capacidades declaradas e configurações existentes — não infere configurações a partir de protocolos conhecidos.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Componente / sistema | S | Texto | Fabricante + modelo + versão |
-| Interface física | S | Texto | Ethernet, RS-485, USB, EtherCAT, etc. |
-| Protocolo de nível de aplicação | S | Texto | EtherNet/IP, Profinet, Modbus TCP, OPC UA, REST, ROS, etc. |
-| Velocidade de comunicação | N | Mbps / bps / Hz | — |
-| Endereçamento | N | Texto | Faixa de IP, node ID, endereço Modbus |
-| Mapa de dados / data model | N | Texto ou tabela | O que é publicado/subscribido, quais registros, quais tags OPC UA |
-| Namespace OPC UA | N | URI | Se OPC UA disponível |
-| Mestre / escravo (fieldbus) | N | Texto | Qual papel o equipamento assume no barramento |
-| Tempo de ciclo de comunicação | N | ms | — |
-| Capacidade de conexões simultâneas | N | Inteiro | — |
-| Fonte | S | Texto + ref | Manual de comunicação, datasheet de interface, application note |
-| Versão do documento fonte | S | Texto | — |
+Todo dado deste tipo responde à pergunta: "o que este componente ou sistema suporta em termos de comunicação, e como está ou pode estar configurado?"
 
-## Fontes válidas (em ordem de prioridade)
-1. Manual de comunicação ou manual de fieldbus oficial do fabricante
-2. Datasheet da interface de comunicação
-3. Application note de integração de rede oficial do fabricante
-4. Diagrama de rede documentado (as-built, com data)
+O tipo cobre infraestrutura de comunicação em qualquer nível: física (Ethernet, RS-485), fieldbus (Profinet, EtherNet/IP, Modbus), middleware (OPC UA, ROS), e redes de TI. Não se limita a robótica industrial.
+
+## Critérios de qualidade
+
+- **Componente ou sistema identificado** — fabricante, modelo, versão de firmware (protocolos suportados podem mudar com updates)
+- **Capacidade declarada vs. configuração existente** — declarar qual dos dois está sendo documentado
+- **Versão do protocolo especificada** — "suporta OPC UA" pode não incluir companion specifications; "suporta Profinet" pode não incluir PROFIsafe
+- **Fonte** — manual de comunicação, datasheet de interface, diagrama de rede com data
+
+Suporte declarado ao protocolo ≠ compatibilidade de integração. Compatibilidade entre dois componentes vai em `interfaces-compatibilidade`.
+
+## Fontes válidas
+
+- Manual de comunicação ou manual de fieldbus oficial do fabricante
+- Datasheet da interface de comunicação
+- Application note de integração de rede oficial do fabricante
+- Diagrama de rede documentado (as-built, com data)
 
 ## Fontes inválidas
-- Configurações inferidas a partir do protocolo ("usa EtherNet/IP, então deve ter registros de I/O em...")
+
+- Configurações inferidas a partir do protocolo
 - Fóruns sem referência a documento oficial
 - Configurações de projetos anteriores sem confirmação que o modelo é o mesmo
 
-## Regras de qualidade
-- Suporte declarado ao protocolo ≠ compatibilidade de integração: dois equipamentos com EtherNet/IP podem não se comunicar sem configuração específica
-- Mapa de dados: registrar o que o fabricante documenta — não inferir registros não documentados
-- Endereçamento: registrar configuração como-está ou padrão de fábrica — sempre especificar qual dos dois
-- Versão de firmware importa: suporte a protocolos pode ser adicionado ou removido em updates
-- Dados ausentes: `NULL-MISSING`
+## Limites com outros tipos
 
-## Armadilhas comuns
-- OPC UA companion specification pode não estar implementada mesmo que o equipamento suporte OPC UA básico
-- "Suporta Profinet" pode significar apenas IO Device, não IRT ou PROFIsafe — verificar perfil suportado
-- Velocidade de comunicação declarada pode ser do hardware físico, não do protocolo configurado — especificar qual
+- **Não é `interfaces-compatibilidade`:** compatibilidade de comunicação entre dois objetos específicos vai em `interfaces-compatibilidade`. Este tipo coleta a capacidade de comunicação de um componente individualmente, ou a topologia de uma rede.
+- **Não é `modelos-interoperabilidade`:** esquemas de dados formais (OPC UA Information Model, eCl@ss) vão em `modelos-interoperabilidade`. Aqui coleta-se a infraestrutura de transporte, não o modelo de dados.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base no componente/rede e na tarefa. Exemplos:
+
+- Para interface de comunicação de cobot: protocolos suportados, versões, interfaces físicas, parâmetros configuráveis (IP, node ID), fonte + versão de firmware
+- Para topologia de rede de célula: diagrama as-built, equipamentos conectados, switches, endereçamento, VLANs se aplicável, data do levantamento
+- Para OPC UA: namespace, information model implementado, companion specifications disponíveis, perfil de segurança suportado

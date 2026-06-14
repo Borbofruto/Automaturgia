@@ -1,4 +1,10 @@
-# Tipo de Dado: `parametros-ventosa`
+# DEPRECIADO: `parametros-ventosa`
+
+> Este arquivo foi depreciado. Arquivos de tipo de dado domain-specific não pertencem em `standards/data-types/`.
+>
+> **Use no lugar:** `parametros-componente` — o tipo geral se aplica a ventosas. O Ordenador, com base na tarefa e no componente específico, determina quais campos coletar (diâmetro, material de lábio, força de sustentação, pressão de operação, etc.).
+>
+> Execute `git rm standards/data-types/parametros-ventosa.md` para remover este arquivo do repositório.
 
 ## Descrição
 

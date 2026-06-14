@@ -1,40 +1,42 @@
-# fornecedores-integradores — Tipo de Dado
+# Tipo de Dado: `fornecedores-integradores`
 
-## Descrição
-Dados sobre empresas que fabricam, distribuem, integram ou suportam componentes e sistemas relevantes. Registra relações factuais entre empresas e produtos/funções — sem avaliação de qualidade, capacidade ou recomendação.
+## Natureza
 
-## Campos a coletar
+Dados sobre **empresas que fabricam, distribuem, integram ou suportam** componentes e sistemas técnicos. Registra relações factuais entre empresas e produtos/funções — sem avaliação de qualidade, capacidade ou recomendação.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Nome da empresa | S | Texto | Razão social ou nome comercial |
-| Papel | S | Texto | Fabricante / Distribuidor / Integrador / Suporte técnico / OEM |
-| Produtos ou marcas representados | S | Lista | — |
-| Cobertura geográfica | S | Texto | Brasil / estado(s) / América do Sul / global |
-| Site oficial | S | URL | — |
-| Contato técnico (se público) | N | Texto | E-mail ou formulário de contato |
-| Certificações relevantes | N | Lista | Ex: UR Certified Integrator, FANUC Authorized Distributor |
-| Data da consulta | S | Data | — |
+Todo dado deste tipo responde à pergunta: "quem está envolvido com este produto ou função, e em qual papel?"
 
-## Fontes válidas (em ordem de prioridade)
-1. Página de parceiros/distribuidores do fabricante do produto
-2. Site oficial da empresa
-3. Catálogos de associações setoriais (ABIMAQ, ABR — Associação Brasileira de Robótica)
-4. Certificação verificável pelo fabricante (ex: lista de integradores certificados UR no site da Universal Robots)
+Os papéis podem variar: fabricante, distribuidor autorizado, integrador certificado, suporte técnico, OEM, revendedor. O tipo se aplica a qualquer cadeia de fornecimento técnico — não se limita a robótica.
+
+## Critérios de qualidade
+
+- **Papel verificável** — "integrador certificado" deve aparecer na lista oficial do fabricante; não basta a empresa se autodeclarar
+- **Cobertura geográfica baseada no que a empresa declara** — não inferida por localização da sede
+- **Data de consulta registrada** — relações comerciais mudam (distribuidores perdem autorização, empresas encerram)
+- **Sem avaliação** — não há campo de qualidade, experiência, recomendação ou capacidade
+
+## Fontes válidas
+
+- Página de parceiros/distribuidores do fabricante do produto
+- Site oficial da empresa
+- Catálogos de associações setoriais (ABIMAQ, ABR, etc.)
+- Lista de integradores certificados publicada pelo fabricante
 
 ## Fontes inválidas
+
 - LinkedIn (informações não verificadas tecnicamente)
 - Listas de fornecedores em sites de comparação ou licitação
 - Indicações informais sem confirmação por fonte primária
 
-## Regras de qualidade
-- Papel declarado deve ser verificável: "integrador certificado" deve aparecer na lista oficial do fabricante
-- Não incluir avaliações de qualidade, experiência, capacidade ou histórico de projetos
-- Cobertura geográfica deve ser baseada no que a empresa declara, não em inferências
-- Se a empresa tem múltiplos papéis (distribuidor E integrador), registrar cada papel separadamente
-- Dados ausentes: `NULL-MISSING`
+## Limites com outros tipos
 
-## Armadilhas comuns
-- "Parceiro" e "distribuidor autorizado" têm significados diferentes dependendo do fabricante — não normalizar
-- Integradores independentes podem trabalhar com múltiplas marcas — listar todas que aparecem na fonte
-- Contato de contato pode mudar — sempre registrar data da consulta
+- **Não é `solucoes-mercado`:** os produtos em si vão em `solucoes-mercado`. Este tipo coleta quem está na cadeia de fornecimento desses produtos.
+- **Não é `casos-aplicacao`:** registros de instalações reais (mesmo que envolvam um integrador) vão em `casos-aplicacao`. Este tipo coleta a empresa e seu papel, não o projeto que executou.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base na empresa e na tarefa. Exemplos:
+
+- Para distribuidor autorizado: razão social, papel, marcas representadas, cobertura geográfica, URL, data de consulta
+- Para integrador certificado: nome, certificação verificada (com link para lista do fabricante), especialidades declaradas, cobertura
+- Para suporte técnico: empresa, tipo de suporte (telefone, campo, remoto), cobertura geográfica, contato público

@@ -1,42 +1,42 @@
-# casos-aplicacao — Tipo de Dado
+# Tipo de Dado: `casos-aplicacao`
 
-## Descrição
-Registros descritivos de instalações reais ou implementações documentadas de sistemas robóticos. Captura o que foi feito, com quais componentes, em que contexto — sem análise de desempenho, sem conclusões sobre o que funcionou ou não. O caso é um dado; a interpretação é trabalho humano posterior.
+## Natureza
 
-## Campos a coletar
+Registros descritivos de **instalações reais ou implementações documentadas** de sistemas técnicos. Captura o que foi feito, com quais componentes, em que contexto — sem análise de desempenho, sem conclusões sobre o que funcionou ou não.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Título do caso | S | Texto | Nome ou descrição curta da aplicação |
-| Setor / indústria | S | Texto | Alimentos, automotivo, farmacêutico, logística, etc. |
-| Tipo de aplicação | S | Texto | Paletização, solda, pick-and-place, inspeção, montagem, etc. |
-| Empresa / cliente | N | Texto | Se divulgado pela fonte; omitir se não divulgado |
-| País / região | N | Texto | — |
-| Componentes utilizados | S | Lista | Robô (modelo), end effector, controlador, software — com fabricante e modelo |
-| Configuração de uso | N | Texto | Payload utilizado, velocidade operacional, ciclo, montagem |
-| Contexto da implementação | N | Texto | Por que foi adotado? Qual o problema que resolveu? (conforme declarado na fonte) |
-| Fonte | S | Texto + URL | Case study do fabricante, paper, notícia técnica |
-| Data de publicação / implementação | S | Data | — |
+Todo dado deste tipo responde à pergunta: "este sistema foi usado desta forma, neste contexto, com estes componentes — conforme documentado na fonte."
 
-## Fontes válidas (em ordem de prioridade)
-1. Case studies oficiais de fabricantes (com dados verificáveis)
-2. Papers acadêmicos ou de conferência com implementação real documentada
-3. Reportagens técnicas em publicações especializadas (Robotics Business Review, A3, etc.)
-4. White papers de integradores com dados verificáveis
+O caso é um dado; a interpretação é trabalho humano posterior. O tipo se aplica a qualquer implementação documentada: robótica industrial, automação de processo, sistemas de controle, infraestrutura de TI. Não se limita a robótica.
+
+## Critérios de qualidade
+
+- **Componentes identificados com fabricante e modelo** — nunca apenas "robô colaborativo" ou "sensor de força"
+- **Fonte identificada** — case study do fabricante, paper, publicação técnica — com data
+- **Conteúdo transcrito conforme declarado** — o que a fonte diz, não o que se infere
+- **Resultados como dado da fonte** — se a fonte declara "reduziu 30%", registrar isso com flag `nao-verificavel`, não como fato verificado
+
+## Fontes válidas
+
+- Case studies oficiais de fabricantes com dados verificáveis
+- Papers acadêmicos ou de conferência com implementação real documentada
+- Reportagens técnicas em publicações especializadas
+- White papers de integradores com dados verificáveis
 
 ## Fontes inválidas
+
 - Depoimentos de clientes sem dados técnicos
 - Comunicados de imprensa sem informação de implementação
 - Cases sem identificação dos componentes utilizados
 
-## Regras de qualidade
-- Componentes devem ser identificados com fabricante E modelo — nunca apenas "robô colaborativo"
-- Contexto de implementação: transcrever o que a fonte declara, não interpretar intenções
-- Não incluir avaliações de sucesso, ROI, produtividade — esses são dados de estudo, não dados de coleta
-- Se a fonte declara resultados (ex: "reduziu tempo de ciclo em 30%"), registrar como dado da fonte, não como fato verificado, com flag `nao-verificavel`
-- Dados ausentes: `NULL-MISSING`
+## Limites com outros tipos
 
-## Armadilhas comuns
-- Cases de fabricantes frequentemente omitem informações desfavoráveis — registrar o que está disponível sem inferir o que não está
-- "Aplicação similar" não é o mesmo caso — não consolidar casos distintos
-- Data de implementação e data de publicação podem ser muito diferentes — registrar ambas quando disponíveis
+- **Não é `parametros-componente`:** especificações do componente usado no caso vão em `parametros-componente`. Este tipo coleta o contexto de uso real, não os parâmetros do componente.
+- **Não é `fornecedores-integradores`:** quem integrou o sistema vai em `fornecedores-integradores`. Este tipo coleta o caso de aplicação que eles executaram.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base no caso e na tarefa. Exemplos:
+
+- Para case study de paletização: setor, tipo de produto, componentes usados (robô + garra + software), configuração operacional, fonte, data
+- Para implementação de cobot em montagem: empresa (se divulgada), contexto declarado pela fonte, especificações de uso (payload, velocidade), integrador (se mencionado)
+- Para instalação industrial documentada em paper: todos os autores, DOI, componentes listados no paper, configuração experimental

@@ -1,43 +1,45 @@
-# conformidade-certificados — Tipo de Dado
+# Tipo de Dado: `conformidade-certificados`
 
-## Descrição
-Registros de certificados e declarações de conformidade emitidos para um componente ou sistema. Documenta o que existe: número do certificado, quem emitiu, quando, com base em quais normas e qual o escopo. Nunca infere status de conformidade a partir de protocolos ou características técnicas.
+## Natureza
 
-## Campos a coletar
+Registros de **certificados e declarações de conformidade** emitidos para um produto ou componente específico. Documenta o que existe: quem emitiu, quando, com base em quais normas e qual o escopo coberto.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Componente / produto certificado | S | Texto | Fabricante + modelo + versão exata |
-| Tipo de certificação | S | Texto | CE, UL, TÜV, cULus, INMETRO, CB Scheme, etc. |
-| Número do certificado | S | Texto | Exatamente como emitido |
-| Organismo certificador | S | Texto | TÜV Rheinland, SGS, Bureau Veritas, etc. |
-| Data de emissão | S | Data | — |
-| Data de validade | N | Data | Se aplicável; `NULL-MISSING` se não tiver |
-| Normas cobertas | S | Lista | Cada norma com número e ano |
-| Escopo da certificação | S | Texto | O que exatamente está coberto (pode haver exclusões) |
-| URL ou referência do certificado | N | URL / ref | Página pública do organismo ou do fabricante |
-| Status atual | S | Texto | Válido / Expirado / Suspenso / Retirado |
+Todo dado deste tipo responde à pergunta: "existe um certificado ou declaração de conformidade para este produto? O que ele cobre e está válido?"
 
-## Fontes válidas (em ordem de prioridade)
-1. Banco de dados público do organismo certificador (ex: UL Product iQ, TÜV database, EU Declaration database)
-2. Declaração de Conformidade emitida pelo fabricante (DoC/EU Declaration of Conformity)
-3. Página oficial de compliance do fabricante com número de certificado verificável
-4. Cópia digital do certificado original fornecida pelo fabricante
+O tipo se aplica a qualquer tipo de certificação técnica: segurança elétrica (CE, UL), qualidade (ISO 9001), segurança funcional (TÜV, SIL), homologação regulatória (INMETRO, FCC, ANATEL), declarações do fabricante (DoC). Não se limita a robótica.
+
+## Critérios de qualidade
+
+- **Produto identificado exatamente** — fabricante, modelo, versão. Um certificado para X.1 não cobre X.2 automaticamente.
+- **Número do certificado** — exatamente como emitido, não parafrasado
+- **Organismo emitente identificado** — quem emitiu importa (auto-declaração ≠ certificação por terceiro)
+- **Escopo declarado** — o que o certificado cobre, incluindo exclusões explícitas
+- **Status verificado** — válido, expirado, suspenso, retirado — verificado na base do organismo emitente
+
+Conformidade não é inferida — se não há certificado documentado, o campo recebe `NULL-MISSING` com as bases consultadas.
+
+## Fontes válidas
+
+- Banco de dados público do organismo certificador (UL Product iQ, TÜV database, EU Declaration database)
+- Declaração de Conformidade emitida pelo fabricante (DoC/EU Declaration of Conformity)
+- Página oficial de compliance do fabricante com número de certificado verificável
+- Cópia digital do certificado original fornecida pelo fabricante
 
 ## Fontes inválidas
+
 - Afirmações de conformidade sem número de certificado verificável
 - Sites de revendedores declarando conformidade por conta própria
 - Documentos sem identificação de organismo emitente
 
-## Regras de qualidade
-- Nunca inferir conformidade: se não há certificado documentado, o campo fica `NULL-MISSING`
-- Escopo pode excluir itens — "certificado CE" pode não cobrir todos os módulos do produto
-- Validade deve ser verificada: certificados podem ser retirados sem atualização do site do fabricante
-- Versão do produto importa: um certificado para o modelo X.1 não cobre o X.2 automaticamente
-- Dados ausentes: `NULL-MISSING` com nota de quais bases de dados foram consultadas
+## Limites com outros tipos
 
-## Armadilhas comuns
-- "Marcação CE" não é uma certificação por organismo — é uma auto-declaração do fabricante (exceto para categorias de alto risco)
-- INMETRO homologação ≠ certificação de segurança funcional
-- Um produto pode ter CE mas não ter aprovação UL, e vice-versa — coletar cada certificação individualmente
-- Certificados podem ser reemitidos com novo número quando a norma de referência é atualizada
+- **Não é `normas-regulamentacoes`:** normas técnicas em si (ISO, IEC, ABNT) vão em `normas-regulamentacoes`. Este tipo coleta a evidência de conformidade a uma norma por parte de um produto específico.
+- **Não é `dados-seguranca-funcionais`:** parâmetros de segurança funcional (PL, SIL) declarados para um sistema vão em `dados-seguranca-funcionais`. O certificado que os atesta vai aqui.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base no tipo de certificação e no produto. Exemplos:
+
+- Para certificação CE de cobot: número de certificado, normas cobertas (ISO 10218-1, ISO 13849), organismo (se terceiro), escopo, validade
+- Para homologação ANATEL: número de homologação, data, URL na base ANATEL
+- Para declaração de conformidade alimentar (FDA, EU 10/2011): documento do fabricante, escopo (quais materiais), data

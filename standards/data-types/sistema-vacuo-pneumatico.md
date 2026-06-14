@@ -1,4 +1,10 @@
-# Tipo de Dado: `sistema-vacuo-pneumatico`
+# DEPRECIADO: `sistema-vacuo-pneumatico`
+
+> Este arquivo foi depreciado. Arquivos de tipo de dado domain-specific não pertencem em `standards/data-types/`.
+>
+> **Use no lugar:** `parametros-componente` para cada componente do sistema (gerador de vácuo, válvula, sensor) individualmente, e `interfaces-compatibilidade` para dados sobre como esses componentes se conectam entre si.
+>
+> Execute `git rm standards/data-types/sistema-vacuo-pneumatico.md` para remover este arquivo do repositório.
 
 ## Descrição
 

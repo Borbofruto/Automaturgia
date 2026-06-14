@@ -1,44 +1,43 @@
-# literatura-tecnica — Tipo de Dado
+# Tipo de Dado: `literatura-tecnica`
 
-## Descrição
-Índice de existência de publicações técnicas relevantes: papers, artigos de conferência, relatórios técnicos, teses, white papers. Registra que a publicação existe, o que ela aborda e onde encontrar — sem síntese do conteúdo, sem extração de conclusões, sem avaliação de qualidade metodológica.
+## Natureza
 
-## Campos a coletar
+Índice de existência de **publicações técnicas** relevantes. Registra que a publicação existe, o que ela aborda e onde encontrar — sem síntese do conteúdo, sem extração de conclusões, sem avaliação de qualidade metodológica.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Título | S | Texto | Título exato |
-| Autor(es) | S | Lista | Sobrenome, Nome — todos os autores |
-| Tipo de publicação | S | Texto | Journal article / Conference paper / Technical report / Thesis / White paper |
-| Veículo de publicação | S | Texto | Nome do journal, conferência ou instituição |
-| Ano | S | Ano | — |
-| DOI ou URL | S | DOI preferido; URL como alternativa | — |
-| Acesso | S | Texto | Aberto / Restrito (paywall) / Repositório institucional |
-| Resumo (abstract) | N | Texto | Transcrição literal do abstract da publicação — nunca paráfrase |
-| Tópicos principais | N | Lista | Extraídos das keywords da publicação |
-| Relação com o contexto da tarefa | N | Texto | Qual tipo de dado esta referência suporta — ex: "contém parâmetros DH do UR5" |
+Todo dado deste tipo responde à pergunta: "esta publicação existe, sobre o que trata, e onde pode ser encontrada?"
 
-## Fontes válidas para localização de publicações
-1. IEEE Xplore (papers de engenharia)
-2. Google Scholar (localização; verificar acesso)
-3. Scopus / Web of Science
-4. arXiv.org (preprints)
-5. Repositórios institucionais de universidades
-6. ACM Digital Library
+O tipo se aplica a qualquer forma de publicação técnica: papers de journal, artigos de conferência, relatórios técnicos, teses, white papers. Não se limita a robótica. É um índice — não é uma revisão bibliográfica.
+
+## Critérios de qualidade
+
+- **Identificação completa** — título exato, autores, veículo de publicação, ano, DOI preferido
+- **Status de acesso declarado** — aberto, paywall, repositório institucional (registro independe de ter acesso ao conteúdo)
+- **Abstract transcrito literalmente** — nunca parafraseado, nunca resumido pelo Executor
+- **Tópicos das keywords da publicação** — não gerados pelo Executor
+
+A publicação é registrada mesmo que o Executor não tenha acesso ao conteúdo completo.
+
+## Fontes válidas
+
+- IEEE Xplore, ACM Digital Library, Scopus, Web of Science
+- Google Scholar (para localização — verificar acesso)
+- arXiv.org (preprints — verificar se há versão de journal)
+- Repositórios institucionais de universidades
 
 ## Fontes inválidas
+
 - Sites que oferecem PDFs sem autorização do autor ou editora
 - Resumos de terceiros que interpretam o paper
 
-## Regras de qualidade
-- Abstract deve ser transcrição literal — nunca síntese ou interpretação própria
-- DOI é preferido a URL porque URLs de journals mudam; DOI é permanente
-- "Acesso restrito" não impede o registro — registrar mesmo sem ter acesso ao conteúdo completo
-- Não incluir avaliação do paper (metodologia boa/ruim, resultado importante/irrelevante)
-- Tópicos principais: usar as keywords da publicação, não gerar keywords próprias
-- Dados ausentes: `NULL-MISSING`
+## Limites com outros tipos
 
-## Armadilhas comuns
-- Preprints (arXiv) podem ter versões revisadas publicadas em journal — verificar se há versão publicada e registrar ambas
-- Papers com mesmo título e autores podem ser versões de conferência e journal do mesmo trabalho — registrar separadamente
-- "Citado por X papers" não é um dado a coletar — relevância não é julgada neste tipo de dado
+- **Não é `desempenho-ensaio`:** um paper que contém resultados de medição: o índice do paper é `literatura-tecnica`; os resultados extraídos do paper são `desempenho-ensaio`. São registros distintos.
+- **Não é `normas-regulamentacoes`:** normas técnicas (ISO, IEC, ABNT) têm tipo próprio. Publicações acadêmicas ou técnicas sobre o tema de uma norma são `literatura-tecnica`.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base na publicação e na tarefa. Exemplos:
+
+- Para paper de journal: título exato, todos os autores, nome do journal, ano, DOI, status de acesso, abstract literal, keywords
+- Para relatório técnico: título, autores/instituição, ano, URL ou número de relatório, status de acesso
+- Para tese: título, autor, instituição, ano, URL do repositório, resumo literal

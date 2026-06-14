@@ -1,4 +1,13 @@
-# Tipo de Dado: `arquitetura-garra-vacuo`
+# DEPRECIADO: `arquitetura-garra-vacuo`
+
+> Este arquivo foi depreciado. Arquivos de tipo de dado domain-specific não pertencem em `standards/data-types/`.
+>
+> **Use no lugar:**
+> - `parametros-componente` — para parâmetros da garra como componente (massa, payload, dimensões, interface de flange)
+> - `dados-geometricos` — para geometria e arranjo espacial das ventosas na garra
+> - `interfaces-compatibilidade` — para dados da interface mecânica, pneumática e elétrica entre a garra e o robô
+>
+> Execute `git rm standards/data-types/arquitetura-garra-vacuo.md` para remover este arquivo do repositório.
 
 ## Descrição
 

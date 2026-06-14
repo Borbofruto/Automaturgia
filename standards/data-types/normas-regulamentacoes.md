@@ -1,46 +1,46 @@
-# normas-regulamentacoes — Tipo de Dado
+# Tipo de Dado: `normas-regulamentacoes`
 
-## Descrição
-Identificação e escopo de normas técnicas relevantes: ISO, IEC, ABNT, EN e similares. Este tipo de dado registra o que a norma é e o que ela cobre — nunca interpreta requisitos, nunca extrai obrigações, nunca conclui o que um produto deve fazer para estar em conformidade.
+## Natureza
 
-## Campos a coletar
+Identificação e escopo de normas e regulamentos técnicos. Este tipo registra **o que a norma é e o que ela cobre** — nunca interpreta requisitos, nunca extrai obrigações, nunca conclui o que um produto deve fazer para estar em conformidade.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Número da norma | S | Texto | Ex: "ISO 10218-1:2011" |
-| Título oficial | S | Texto | Título exato, no idioma original |
-| Organismo emitente | S | Texto | ISO, IEC, ABNT, EN, ANSI, etc. |
-| Ano de publicação | S | Ano | — |
-| Status | S | Texto | Ativa / Supersedida / Retirada / Em revisão |
-| Norma que a supersede (se aplicável) | N | Texto | Número da norma mais recente |
-| Escopo declarado | S | Texto | Transcrição literal do campo "Scope" da norma |
-| Aplicabilidade ao contexto | N | Texto | Como esta norma se aplica à tarefa em questão — descritivo, sem interpretação de requisitos |
-| Partes / seções relevantes | N | Lista | Ex: "Parte 2 — Sistemas de robô" |
-| Disponibilidade | N | Texto | Paga (ISO Store), gratuita (IEC acesso livre), ABNT Catalogo |
-| URL de catálogo | N | URL | Link para página oficial da norma, não para cópia |
+Todo dado deste tipo responde à pergunta: "esta norma existe, o que ela cobre, e qual é o seu status atual?"
+
+O tipo se aplica a qualquer normativo: ISO, IEC, ABNT, EN, ANSI, OSHA, regulamentos de agência, diretivas EU, normas de associações de indústria. Não se limita a robótica — vale para qualquer domínio técnico.
+
+## Critérios de qualidade
+
+- **Identificação completa** — número, organismo emitente, ano de publicação
+- **Status verificado** — ativa, supersedida, retirada, em revisão — verificado no catálogo oficial, não em terceiros
+- **Escopo transcrito literalmente** — o campo "Scope" da norma copiado como está, sem paráfrase
+- **Fonte** — link para a página oficial da norma no catálogo do organismo emitente
+
+A data de verificação do status deve ser registrada — normas são revisadas e substituídas sem aviso.
 
 ## Fontes válidas
-1. ISO.org — catálogo oficial ISO
-2. IEC Webstore — catálogo oficial IEC
-3. ABNT Catálogo — abntcatalogo.abnt.org.br
-4. Portais nacionais oficiais (DIN, BSI, ANSI, etc.)
-5. Texto da própria norma (quando disponível e autenticado)
+
+- ISO.org — catálogo oficial ISO
+- IEC Webstore — catálogo oficial IEC
+- ABNT Catálogo — abntcatalogo.abnt.org.br
+- Portais nacionais oficiais (DIN, BSI, ANSI, etc.)
+- Texto da própria norma (quando disponível e autenticado) para transcrição de escopo
 
 ## Fontes inválidas
+
 - Resumos de normas em blogs, consultoras ou sites de treinamento
 - Wikipedia ou Wikiwand
 - PDFs de origem desconhecida
 - Textos que parafraseiam ou interpretam a norma
 
-## Regras de qualidade
-- O campo "escopo declarado" deve ser transcrição literal — nunca resumo ou paráfrase
-- Status deve ser verificado no catálogo oficial: normas são revisadas e substituídas
-- Aplicabilidade ao contexto é descritiva ("esta norma cobre robôs colaborativos, o que inclui o sistema X") — nunca normativa ("o sistema X deve atender ao requisito Y")
-- Conflito de status entre fontes (ex: duas fontes com datas de publicação diferentes): registrar ambos, criar `registro-conflitos`
-- Dados ausentes: `NULL-MISSING`
+## Limites com outros tipos
 
-## Armadilhas comuns
-- ISO 10218-1 e ISO 10218-2 são partes distintas — coletar individualmente
-- ISO/TS 15066 e ISO 10218-2 tratam de temas sobrepostos mas não são equivalentes — não consolidar
-- Normas EN frequentemente adotam texto de ISO/IEC mas podem ter adendos nacionais — registrar se há adendo
-- Data de publicação da norma ≠ data de adoção nacional — registrar ambas quando relevante
+- **Não é `conformidade-certificados`:** certificados e declarações de conformidade de um produto específico vão em `conformidade-certificados`. Este tipo coleta a norma em si, não a conformidade a ela.
+- **Não é `dados-seguranca-funcionais`:** parâmetros de segurança funcional (PL, SIL) derivados de aplicação de norma vão em `dados-seguranca-funcionais`. Este tipo coleta a norma como documento, não o resultado de sua aplicação.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos relevantes com base na norma e na tarefa. Exemplos:
+
+- Para uma norma ISO: número completo (ex: ISO 10218-1:2011), título oficial, organismo, ano, status, escopo literal, URL de catálogo
+- Para uma diretiva EU: número, ano, escopo declarado, estado de transposição nacional, link para jornal oficial
+- Para norma ABNT: número, título em português, status, se é adoção de ISO/IEC ou norma original

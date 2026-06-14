@@ -1,45 +1,47 @@
-# desempenho-ensaio — Tipo de Dado
+# Tipo de Dado: `desempenho-ensaio`
 
-## Descrição
-Resultados de medições de desempenho de um componente ou sistema, obtidos por ensaio documentado. Inclui o valor medido, a condição de ensaio, o método utilizado e a fonte. Não inclui interpretações sobre se o desempenho é adequado ou superior — apenas o que foi medido e como.
+## Natureza
 
-## Campos a coletar
+Resultados de medições de desempenho obtidos por **ensaio documentado**, com método, condições e fonte rastreáveis. Diferente de especificações declaradas pelo fabricante — este tipo coleta o que foi *medido*, não o que foi *prometido*.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Componente / sistema ensaiado | S | Texto | Fabricante + modelo + versão |
-| Parâmetro medido | S | Texto | Ex: "Repetibilidade", "Tempo de ciclo" |
-| Valor medido | S | Numérico + unidade | Ex: "±0.02 mm" |
-| Método de medição | S | Texto | Norma de referência (ISO 9283, etc.) ou descrição do método |
-| Condições do ensaio | S | Texto | Payload, velocidade, temperatura, postura, ciclo de teste |
-| Incerteza de medição | N | Numérico + unidade | Se declarada pela fonte |
-| Executor do ensaio | N | Texto | Fabricante, laboratório terceiro, pesquisador |
-| Instituição / laboratório | N | Texto | — |
-| Data do ensaio | N | Data | — |
-| Fonte do resultado | S | Texto + URL/ref | Datasheet, relatório de ensaio, paper |
+Todo dado deste tipo responde à pergunta: "o que foi medido, como, em que condições, e quem mediu?"
 
-## Fontes válidas (em ordem de prioridade)
-1. Datasheet do fabricante com seção de desempenho (valores declarados pelo fabricante, com condições)
-2. Relatório de ensaio de laboratório certificado
-3. Paper acadêmico com metodologia e condições de ensaio explicitamente documentadas
-4. Relatório técnico interno com setup documentado
+O tipo se aplica a qualquer grandeza mensurável de qualquer componente ou sistema: repetibilidade, tempo de ciclo, força, vazão, temperatura, tensão, vibração. Não se limita a robótica nem a nenhuma norma específica.
+
+## Critérios de qualidade
+
+Todo resultado de ensaio deve ter:
+- **Valor medido + unidade**
+- **Método de medição** — norma de referência (ISO 9283, IEC 60068, etc.) ou descrição do procedimento
+- **Condições do ensaio** — pelo menos: carga/payload, velocidade, temperatura ambiente, postura ou configuração
+- **Executor** — fabricante, laboratório, pesquisador (quem mediu afeta o peso do dado)
+- **Fonte** — relatório, paper, datasheet com seção de ensaio
+
+Valor sem condição de ensaio = dado inválido. Campo recebe `NULL-MISSING`.
+
+## Fontes válidas
+
+- Relatório de ensaio de laboratório certificado
+- Datasheet do fabricante com seção de desempenho explicitando condições
+- Paper acadêmico com metodologia documentada
+- Relatório técnico interno com setup documentado e rastreável
 
 ## Fontes inválidas
+
 - Valores de desempenho sem condições de ensaio declaradas
 - Comparativos de mercado que citam specs sem referência à fonte primária
 - Estimativas ou valores simulados apresentados como medidos
-- Blogs ou reviews técnicos sem referência a ensaio formal
+- Reviews técnicos sem metodologia formal
 
-## Regras de qualidade
-- Valor sem condição de ensaio = dado inválido — campo fica `NULL-MISSING`
-- Condições mínimas obrigatórias: payload, velocidade, temperatura ambiente
-- Método de medição obrigatório: citar norma (ISO 9283, etc.) ou descrever o procedimento usado
-- Repetibilidade declarada pelo fabricante vs. medida por terceiro são dados distintos — coletar como registros separados
-- Se duas fontes divergem no mesmo parâmetro sob as mesmas condições: preservar ambos com fonte; criar `registro-conflitos`
-- Dados ausentes: `NULL-MISSING` com nota de quais fontes foram consultadas
+## Limites com outros tipos
 
-## Armadilhas comuns
-- Repetibilidade ISO 9283 mede apenas um ciclo específico — não equivale a precisão geral
-- "Tempo de ciclo" pode ser definido de formas diferentes — verificar trajetória e distância do ciclo medido
-- Dados de desempenho de datasheets são frequentemente condições ideais — registrar isso explicitamente
-- Ensaios feitos pelo fabricante vs. ensaios independentes têm peso de confiança diferente — registrar quem ensaiou
+- **Não é `parametros-componente`:** valores declarados pelo fabricante como especificação (payload nominal, alcance) são `parametros-componente`. Aqui coleta-se o resultado de uma medição com método.
+- **Não é `conformidade-certificados`:** o ensaio que gera um certificado de conformidade é `conformidade-certificados`. Ensaios de desempenho sem vínculo a processo de certificação são `desempenho-ensaio`.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos com base no parâmetro ensaiado e na tarefa. Exemplos:
+
+- Para repetibilidade de robô (ISO 9283): valor ±mm, ciclo de teste, payload, velocidade, temperatura, quem executou
+- Para força de sustentação de ventosa: valor N, pressão de vácuo aplicada, tipo de superfície, instrumento de medição
+- Para tempo de ciclo: trajetória exata, carga transportada, velocidade programada, número de ciclos medidos

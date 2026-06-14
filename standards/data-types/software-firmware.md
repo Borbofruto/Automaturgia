@@ -1,48 +1,47 @@
-# software-firmware — Tipo de Dado
+# Tipo de Dado: `software-firmware`
 
-## Descrição
-Informações sobre software de controle, firmware de equipamento, SDKs, APIs, plugins e changelogs relevantes para um componente específico. Cobre o que existe, qual versão, o que ela faz e onde encontrar — sem avaliação comparativa entre versões.
+## Natureza
 
-## Campos a coletar
+Dados sobre **artefatos de software e firmware** associados a um componente ou sistema: o que existe, em qual versão, o que cada versão muda, e quais são as dependências e restrições de uso.
 
-| Campo | Obrigatório | Tipo | Notas |
-|---|---|---|---|
-| Componente (fabricante + modelo) | S | Texto | A qual hardware este software pertence |
-| Nome do software / firmware | S | Texto | Nome oficial |
-| Versão | S | Texto | Número exato (ex: "5.14.3") |
-| Data de lançamento | S | Data | DD/MM/AAAA |
-| Tipo | S | Texto | Firmware / SDK / API / Plugin / URCap / App |
-| Linguagens suportadas | N | Lista | Python, C++, Java, PolyScope, etc. |
-| Plataformas suportadas | N | Lista | Windows, Linux, ROS, etc. |
-| Funcionalidades principais | N | Lista | Extraídas literalmente das release notes |
-| Mudanças em relação à versão anterior | N | Lista | De changelog oficial, sem síntese |
-| Compatibilidade declarada (hardware) | N | Texto | Versões de hardware suportadas |
-| Compatibilidade declarada (software) | N | Texto | Dependências, versões de OS, libs |
-| URL de download / repositório | N | URL | Link oficial, com data de acesso |
-| Licença | N | Texto | Proprietária, MIT, Apache, etc. |
-| Status | S | Texto | Ativo / LTS / End of Life / Beta |
+Todo dado deste tipo responde à pergunta: "qual software/firmware existe, em que versão, e o que isso implica?"
 
-## Fontes válidas (em ordem de prioridade)
-1. Portal oficial de download do fabricante (com versão e data de publicação visíveis)
-2. Repositório GitHub oficial do fabricante
-3. Release notes / changelog oficial
-4. SDK documentation oficial
-5. URCap / plugin marketplace do fabricante
+Cobre desde firmware embarcado em componentes (cobot, sensor, CLP) até software de desenvolvimento (SDKs, extensões, bibliotecas), passando por ferramentas de configuração e ambientes de execução.
+
+## Critérios de qualidade
+
+- **Versão identificada com precisão** — número de versão exato, não "versão atual" ou "última versão"
+- **Data de referência** — a versão coletada estava vigente em qual data (software muda)
+- **Fonte** — release notes oficiais, changelog, ou documentação do fabricante que mencione a versão
+- **Escopo declarado** — o que a versão cobre (quais dispositivos, quais funcionalidades)
+
+Para changelogs e release notes: transcrever o conteúdo relevante literalmente — não resumir nem interpretar.
+
+## Fontes válidas
+
+- Release notes e changelogs oficiais do fabricante
+- Documentação de SDK publicada pelo fabricante com número de versão
+- Portal de downloads oficial com data de acesso
+- Registro de versão no próprio dispositivo (screenshot ou log — registrar data e contexto)
 
 ## Fontes inválidas
-- Repositórios de terceiros não oficiais
-- Sites de mirror sem verificação de origem
-- Changelog extraído de fóruns ou comentários de issues
 
-## Regras de qualidade
-- Sempre registrar versão exata — nunca "versão recente" ou "versão atual"
-- Data de acesso é obrigatória para URLs (firmware pode ser atualizado sem aviso)
-- Funcionalidades e mudanças devem ser transcritas do changelog, não parafrasadas
-- Não sintetizar nem comparar versões — coletar cada versão como registro independente
-- Valores ausentes: `NULL-MISSING`
-- Se o fabricante não publica changelog público, registrar isso explicitamente como `nao-encontrado`
+- Repositórios de terceiros que redistribuem software sem controle de versão rastreável
+- Fóruns e comunidades para dados de versão
+- "Versão mais recente" sem identificação exata
+- Comparações de versão feitas por terceiros sem referência à documentação original
 
-## Armadilhas comuns
-- Versão de SDK e versão de firmware são dados separados — coletar individualmente
-- URCaps têm versão própria além da versão de PolyScope compatível — ambas devem ser registradas
-- "Versão mais recente" muda ao longo do tempo — sempre fixar a versão coletada e a data
+## Limites com outros tipos
+
+- **Não é `interfaces-compatibilidade`:** a compatibilidade entre versão X e dispositivo Y é `interfaces-compatibilidade`. Aqui coleta-se o que existe e o que cada versão contém.
+- **Não é `parametros-componente`:** capacidades operacionais do componente (payload, alcance) são `parametros-componente`. O firmware que habilita uma funcionalidade é `software-firmware`.
+- **Não é `processos-procedimentos`:** o procedimento de atualização de firmware é `processos-procedimentos`. A versão do firmware a instalar é `software-firmware`.
+
+## Exemplos de campos (não exaustivo)
+
+O Ordenador determina os campos relevantes com base no software/firmware e na tarefa. Exemplos:
+
+- Para firmware de cobot: versão, data de lançamento, dispositivos suportados, breaking changes
+- Para SDK: versão, linguagens suportadas, dependências, data de lançamento, EOL se declarado
+- Para extensão de software (URCap, plugin): versão, requisito de ambiente mínimo, funcionalidades incluídas
+- Para ferramenta de configuração: versão, sistemas operacionais suportados, restrições de compatibilidade
