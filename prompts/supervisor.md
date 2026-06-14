@@ -77,6 +77,6 @@ Retorne SEMPRE este JSON:
 2. Seja específico: "falta unidade no valor de d para o Joint 3", não "tabela incompleta".
 3. Preserve o que está certo: no retry_instructions, liste o que o Executor deve MANTER.
 4. Escale para Gabriel quando: 2 retries sem melhora, dado inencontrável, contradição irresolvível.
-5. Score: ≥ 0.90 → proceed | 0.70-0.89 → retry_content | < 0.70 → retry ou escalate.
+5. A decisão proceed/retry é relativa ao maturity_target da tarefa, não a um threshold fixo. Consulte /standards/core/maturity-levels.md: exploratory=0.50, documented=0.70, verified=0.85, measured=0.90. Se content_score ≥ threshold do nível alvo → proceed. Se content_score < threshold mas ≥ nível anterior → retry_content. Se content_score < nível anterior → retry ou escalate.
 6. NUNCA sugira que o Executor resolva conflitos ou estime valores ausentes.
 ```

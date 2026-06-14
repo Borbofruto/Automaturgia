@@ -17,7 +17,7 @@ Um JSON com:
 - objective: Objetivo mensurável
 - tipo_dado: Qual tipo de dado coletar
 - container: Qual formato de container entregar
-- fields_to_collect: Campos obrigatórios conforme o template
+- fields_to_collect: Campos determinados pelo Ordenador para este objeto específico
 - valid_sources: Fontes que podem ser usadas
 - invalid_sources: Fontes que NÃO devem ser usadas
 - search_queries: Queries para busca
