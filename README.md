@@ -2,7 +2,9 @@
 
 A **Automaturge** é uma iniciativa de pesquisa e desenvolvimento de métodos para robótica aplicada — produz métodos práticos de automação robótica e os estudos técnicos que os fundamentam.
 
-Este repositório contém a **infraestrutura do pipeline de coleta de dados** que a Automaturge usa como instrumento de pesquisa: padrões de metodologia, templates de estruturação de dados, prompts dos agentes de IA e contratos de ferramentas. É uma ferramenta da Automaturge — não o produto dela.
+Este repositório contém a infraestrutura do **pipeline de geração de dossiês técnicos** que a Automaturge usa como etapa de pesquisa. O pipeline automatiza a compilação e estruturação de material técnico existente — normas, datasheets, literatura, especificações — em dossiês rastreáveis que servem de embasamento teórico para os estudos e métodos que a Automaturge produz. Os agentes de IA não criam conhecimento, não interpretam, não concluem: reúnem e organizam o que já existe.
+
+É uma ferramenta da Automaturge — não o produto dela.
 
 > **O pipeline reúne dados técnicos. A Automaturge conclui algo com eles.**
 > "Uma pesquisa reúne dados. Um método ensina como usá-los."
