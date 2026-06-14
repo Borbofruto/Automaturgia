@@ -7,7 +7,7 @@ O Executor consulta este arquivo para saber quais ferramentas estão disponívei
 ## `web_search` — Busca na internet
 
 **Arquivo:** `web_search.py`  
-**Quando usar:** Qualquer tarefa que exija dados atualizados, especificações técnicas, literatura, parâmetros de fabricantes.  
+**Quando usar:** Qualquer tarefa que exija dados técnicos atualizados: especificações de componentes, certificados, normas, distribuição no mercado.  
 **Não usar para:** Dados que o modelo já sabe com alta confiança e que não mudam (ex: fórmulas matemáticas estabelecidas).
 
 ```
@@ -20,8 +20,8 @@ Saída:    lista de { title, url, snippet, content }
 ## `generate_pdf` — Geração de PDF
 
 **Arquivo:** `pdf_generator.py`  
-**Quando usar:** Relatórios técnicos, estudos com múltiplas seções, entregas formais de pesquisa.  
-**Formato esperado:** Markdown estruturado com `# Título`, `## Seção`, tabelas, fórmulas LaTeX entre `$$`.
+**Quando usar:** Containers que requerem documento formal: ficha-tecnica, dossier-interface, conformidade-regulatoria, caderno-procedimentos, casos-aplicacao.  
+**Formato esperado:** Markdown estruturado com `# Título`, `## Seção`, tabelas.
 
 ```
 Entrada:  content_markdown (str), filename (str), metadata (dict)
@@ -33,7 +33,7 @@ Saída:    caminho do arquivo PDF gerado
 ## `generate_docx` — Geração de Word (.docx)
 
 **Arquivo:** `docx_generator.py`  
-**Quando usar:** Documentos que o usuário editará posteriormente, relatórios colaborativos, entregas em formato Word.
+**Quando usar:** Containers que serão editados ou complementados manualmente após entrega: caderno-procedimentos, inventario-normas, repositorio-referencias.
 
 ```
 Entrada:  content_markdown (str), filename (str), template (str, opcional)
@@ -45,8 +45,7 @@ Saída:    caminho do arquivo .docx gerado
 ## `generate_xlsx` — Geração de planilha Excel (.xlsx)
 
 **Arquivo:** `xlsx_generator.py`  
-**Quando usar:** Dados tabulares com múltiplas colunas, comparações numéricas, datasets de parâmetros, benchmarks.  
-**Não usar para:** Uma única tabela simples que cabe melhor num PDF.
+**Quando usar:** Containers tabulares com múltiplas colunas e fontes: tabela-comparativa, planilha-dados-brutos, mapa-fornecedores, catalogo-solucoes.
 
 ```
 Entrada:  data (list[dict] ou dict de sheets), filename (str)
@@ -55,13 +54,20 @@ Saída:    caminho do arquivo .xlsx gerado
 
 ---
 
-## Decisão de ferramenta (regra do Ordenador)
+## Decisão de ferramenta por container
 
-| Tipo de tarefa | Ferramenta de busca | Formato de saída |
+| Container | Formato recomendado | Ferramenta |
 |---|---|---|
-| Levantamento de parâmetros técnicos | web_search | xlsx ou pdf |
-| Análise metodológica | web_search | pdf |
-| Geração de script/código | — (modelo gera direto) | .py / .js no GitHub |
-| Comparação de equipamentos | web_search | xlsx |
-| Estudo de caso documentado | web_search | docx ou pdf |
-| Definição de envelope/workspace | web_search | pdf com figuras |
+| ficha-tecnica | PDF | generate_pdf |
+| tabela-comparativa | XLSX | generate_xlsx |
+| catalogo-solucoes | XLSX | generate_xlsx |
+| inventario-normas | DOCX ou PDF | generate_docx / generate_pdf |
+| repositorio-referencias | DOCX | generate_docx |
+| planilha-dados-brutos | XLSX | generate_xlsx |
+| mapa-fornecedores | XLSX | generate_xlsx |
+| dossier-interface | PDF | generate_pdf |
+| registro-ensaios | PDF ou XLSX | generate_pdf / generate_xlsx |
+| caderno-procedimentos | PDF | generate_pdf |
+| conformidade-regulatoria | PDF | generate_pdf |
+| dossie-tecnico-tdp | PDF | generate_pdf |
+| registro-conflitos | XLSX | generate_xlsx |

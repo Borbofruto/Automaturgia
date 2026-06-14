@@ -7,88 +7,100 @@ A validação é feita em **duas dimensões independentes**: Formato e Conteúdo
 
 ## Dimensão 1 — Validação de Formato
 
-O Supervisor verifica se o arquivo entregue está no formato correto ANTES de avaliar o conteúdo.
+O Supervisor verifica se o container entregue corresponde ao especificado no `validation_brief` ANTES de avaliar o conteúdo.
 Se o formato estiver errado, retorna ao Executor com feedback de formato apenas.
 
-### Checklist de Formato
+### Checklist de Formato por Container
 
-**PDF:**
-- [ ] Arquivo é um PDF válido e abrível
-- [ ] Contém as seções obrigatórias (Resumo, Objetivo, Metodologia, Resultados, Fontes)
-- [ ] Tabelas têm cabeçalho destacado
-- [ ] Rodapé com paginação presente
-- [ ] Fórmulas legíveis (não texto puro)
+**ficha-tecnica / dossier-interface / conformidade-regulatoria:**
+- [ ] Cabeçalho de identificação completo (fabricante + modelo + revisão + data de coleta)
+- [ ] Tabela com colunas: Campo, Valor, Unidade, Fonte (ref), Estado
+- [ ] Seção de fontes presente com URL e data de acesso
+- [ ] Nenhuma célula em branco — `NULL-MISSING` ou valor
 
-**XLSX:**
-- [ ] Arquivo é um .xlsx válido
-- [ ] Cabeçalhos presentes na linha correta
-- [ ] Unidades incluídas nos cabeçalhos de colunas numéricas
-- [ ] Sem células mescladas nos dados (apenas no título)
-- [ ] Cabeçalho com fundo escuro visível
+**tabela-comparativa:**
+- [ ] Cabeçalho de coluna com fabricante + modelo + versão de cada item
+- [ ] Toda célula numérica com unidade e referência
+- [ ] Sem coluna de ranking ou recomendação
+- [ ] Rodapé de fontes numeradas presente
 
-**DOCX:**
-- [ ] Arquivo é um .docx válido
-- [ ] Usa estilos Heading (não negrito manual)
-- [ ] Capa presente com título e data
-- [ ] Tabelas com estilo "Table Grid"
+**catalogo-solucoes:**
+- [ ] Critérios de inclusão declarados no cabeçalho
+- [ ] Data de consulta em cada entrada
+- [ ] Status comercial verificado com data
 
-**Script:**
-- [ ] Arquivo tem extensão correta (.py, .js)
-- [ ] Docstring presente no topo
-- [ ] `if __name__ == "__main__"` presente (Python)
-- [ ] Sem credenciais hardcoded
+**inventario-normas:**
+- [ ] Escopo de cada norma é transcrição literal (não paráfrase)
+- [ ] Status verificado no catálogo oficial
+
+**planilha-dados-brutos:**
+- [ ] Aba "Dados Brutos" sem fórmulas nas células de dado
+- [ ] Aba "Metadados" presente
+- [ ] Unidades nos cabeçalhos de colunas numéricas
+
+**registro-ensaios:**
+- [ ] Método de ensaio declarado (norma ou procedimento)
+- [ ] Condições do ensaio completas
+- [ ] Resultados como medições, não como conclusões
+
+**registro-conflitos:**
+- [ ] Toda entrada tem ID (RC-XXX)
+- [ ] Conflitos têm dois valores com fontes individuais
+- [ ] Campo "Resolução" vazio (não preenchido pela IA)
+
+**repositorio-referencias:**
+- [ ] Data de acesso em toda entrada
+- [ ] Fontes consultadas sem resultado listadas com status `Não encontrado`
 
 ---
 
 ## Dimensão 2 — Validação de Conteúdo
 
-### Critérios universais (toda tarefa)
+### Critérios universais (toda coleta)
 
-1. **Completude:** Todos os campos/dados solicitados no brief de execução estão presentes
-2. **Rastreabilidade:** Fontes citadas para dados factuais (não para análises do próprio modelo)
-3. **Unidades:** Toda grandeza numérica tem unidade explícita
-4. **Lacunas sinalizadas:** Dados não encontrados estão marcados com `[N/D]`, não omitidos
-5. **Sem alucinação:** Dados numéricos críticos (parâmetros de robô, normas) têm fonte rastreável
+1. **Rastreabilidade:** Todo valor numérico ou afirmação técnica tem referência de fonte
+2. **Unidades:** Toda grandeza numérica tem unidade explícita
+3. **Completude declarada:** Campos ausentes estão como `NULL-MISSING`, não omitidos
+4. **Sem alucinação:** Parâmetros numéricos de componentes não devem existir sem fonte verificável
+5. **Conflitos preservados:** Divergência entre fontes = ambos os valores registrados + entrada em `registro-conflitos`
+6. **Sem resolução de conflitos:** A IA não escolhe entre valores conflitantes
 
-### Critérios por tipo de conteúdo
+### Critérios específicos por tipo de dado
 
-**Parâmetros técnicos (DH, cinemática, payload):**
-- Todos os graus de liberdade cobertos (nenhum joint faltando)
-- Convenção de referência declarada (ex: Craig, Denavit-Hartenberg padrão)
-- Unidades consistentes ao longo do documento
-- Conflitos entre fontes documentados, não resolvidos arbitrariamente
+**parametros-componente:**
+- Convenção de referência declarada (ex: DH de Craig) quando parâmetros DH presentes
+- Condições de payload especificadas (postura, distância do CG)
+- Versão do datasheet registrada
 
-**Análise metodológica:**
-- Hipótese de pesquisa declarada
-- Escopo e limitações explícitos
-- Conclusões derivadas dos dados apresentados (não afirmações soltas)
+**normas-regulamentacoes:**
+- Escopo transcrito literalmente — sem interpretação de requisitos
 
-**Comparativos / benchmarks:**
-- Condições de teste idênticas entre itens comparados (ou diferenças documentadas)
-- Valores extremos justificados
-- Fonte por linha de dado
+**desempenho-ensaio / registro-ensaios:**
+- Método de medição declarado
+- Condições de ensaio suficientes para reprodutibilidade
 
-**Scripts / código:**
-- Executa sem erro no ambiente esperado
-- Produz output no formato especificado
-- Casos de erro tratados
+**dados-seguranca-funcionais:**
+- PL/SIL referenciados a funções específicas, não ao produto como um todo
+- Nenhum valor de segurança inferido — apenas documentado
+
+**conformidade-certificados / conformidade-regulatoria:**
+- Nenhuma conformidade inferida sem certificado documentado
+- Lacunas listadas explicitamente
 
 ---
 
 ## Protocolo de retry
 
 ### Retry por falha de formato
-O Supervisor retorna ao Executor com:
 ```
 STATUS: retry_format
-FORMATO ESPERADO: [nome do formato]
+CONTAINER ESPERADO: [nome do container]
 PROBLEMAS ENCONTRADOS: [lista específica]
-CONTEÚDO: O conteúdo gerado estava [adequado/parcialmente adequado/inadequado]
-INSTRUÇÃO: Reformatar o conteúdo preservando os dados já corretos.
+CONTEÚDO: [adequado/parcialmente adequado/inadequado]
+INSTRUÇÃO: Reformatar preservando os dados já corretos.
 ```
 
 ### Retry por falha de conteúdo (formato OK)
-O Supervisor retorna ao Executor com:
 ```
 STATUS: retry_content
 FORMATO: Aprovado ✓ (não alterar)
@@ -96,10 +108,10 @@ PROBLEMAS DE CONTEÚDO: [lista específica com localização no documento]
 INSTRUÇÃO: Corrigir apenas os problemas listados, mantendo o formato e o conteúdo já correto.
 ```
 
-### Escalação para Claude/Gabriel
+### Escalação para Gabriel
 Após 2 tentativas sem aprovação, ou quando:
 - Dado não pode ser encontrado em nenhuma fonte acessível
-- Existe contradição irresolvível entre fontes primárias
+- Existe contradição irresolvível entre fontes primárias (→ `registro-conflitos` + escalação)
 - A tarefa exige decisão de escopo que ultrapassa a capacidade do pipeline
 
 ---
@@ -110,5 +122,5 @@ Após 2 tentativas sem aprovação, ou quando:
 |---|---|
 | 0.90 – 1.00 | Aprovado → Google Drive |
 | 0.70 – 0.89 | Retry com feedback específico |
-| 0.50 – 0.69 | Retry (pode requerer pesquisa adicional) |
-| < 0.50 | Escalação para Claude/Gabriel |
+| 0.50 – 0.69 | Retry (pode requerer busca adicional) |
+| < 0.50 | Escalação para Gabriel |

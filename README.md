@@ -1,17 +1,23 @@
 # Automaturge · Research & Methods for Applied Robotics
 
-Repositório de infraestrutura de conhecimento da iniciativa **Automaturge**.
+Repositório de infraestrutura de conhecimento da **Automaturge**.
 
-Este repositório não é um produto nem uma biblioteca de código genérico. É a **base operacional** do pipeline de pesquisa automatizada — contém as ferramentas, padrões e instruções que os agentes de IA utilizam para executar, validar e entregar estudos técnicos em robótica industrial.
+Este repositório não é um produto nem uma biblioteca de código genérico. É a **base operacional** do pipeline de coleta automatizada de dados técnicos — contém as ferramentas, templates e instruções que os agentes de IA utilizam para executar, validar e entregar dossiers de dados em robótica industrial.
+
+> **A Automaturge reúne dados técnicos. Não produz estudos.**
+> "Uma pesquisa reúne dados. Um estudo conclui algo."
 
 ---
 
 ## Estrutura
 
 ```
-/tools          → Scripts executáveis pelos agentes (busca, geração de documentos, etc.)
-/standards      → Padrões de metodologia, formato de entrega e critérios de qualidade
-/prompts        → System prompts dos agentes (Ordenador, Executor, Supervisor)
+/standards
+  /data-types     → Templates de coleta por tipo de dado (o que coletar)
+  /containers     → Templates de entrega por formato de container (como estruturar)
+/prompts          → System prompts dos agentes (Ordenador, Executor, Supervisor)
+/tools            → Scripts executáveis pelos agentes (busca, geração de documentos)
+/pipeline         → Código do workflow n8n
 ```
 
 ---
@@ -20,18 +26,89 @@ Este repositório não é um produto nem uma biblioteca de código genérico. É
 
 | Agente | Modelo | O que lê aqui |
 |---|---|---|
-| **Ordenador** | DeepSeek V3 | `/standards/` + `/tools/README.md` → decide formato de saída e ferramentas |
-| **Executor** | Qwen 2.5 Coder 32B | `/tools/` → executa ferramentas conforme brief do Ordenador |
-| **Supervisor** | Gemini Flash (thinking: high) | `/standards/quality/` → valida formato e conteúdo independentemente |
+| **Ordenador** | DeepSeek V3 | `/standards/` → lê templates do tipo de dado e container configurados na tarefa, constrói brief para o Executor |
+| **Executor** | Qwen 2.5 Coder 32B | `/tools/` → coleta e estrutura os dados conforme brief do Ordenador |
+| **Supervisor** | Gemini Flash 3 | `/standards/containers/` → valida rastreabilidade, completude e formato; sinaliza conflitos sem resolvê-los |
+
+Custo: apenas modelos < $1/M tokens são usados na pipeline automática.
 
 ---
 
-## Princípio de uso
+## Como uma tarefa é configurada
 
-O Ordenador lê uma tarefa do ClickUp (escrita em linguagem humana, descrevendo objetivo) e consulta este repositório para:
-1. Identificar qual **padrão de formato** se aplica (`/standards/documents/`)
-2. Identificar qual **metodologia de pesquisa** se aplica (`/standards/research/`)
-3. Identificar quais **ferramentas** o Executor precisará (`/tools/README.md`)
-4. Construir dois briefs distintos: um para o Executor, outro para o Supervisor
+No ClickUp, cada tarefa de pesquisa define duas dimensões de tag:
 
-Isso elimina a necessidade de detalhar ferramentas e metodologias em cada tarefa do ClickUp.
+- **Dimensão 1 — tipo de dado** (`/standards/data-types/`): o que coletar
+- **Dimensão 2 — container** (`/standards/containers/`): como entregar
+
+O Ordenador lê os dois templates correspondentes antes de construir o brief. As dimensões nunca se fundem em uma tag só.
+
+**Exemplo:** coletar especificações do cobot UR10e
+→ tags `parametros-componente` + `ficha-tecnica`
+
+**Exemplo:** mapear cobots de payload médio disponíveis no Brasil
+→ tags `solucoes-mercado` + `tabela-comparativa`
+
+---
+
+## Vocabulário de tags
+
+### Dimensão 1 — Tipos de dado
+
+| Tag | O que é coletado |
+|---|---|
+| `parametros-componente` | Payload, alcance, torque, parâmetros DH, IP |
+| `interfaces-compatibilidade` | Protocolos, pinout, I/O entre componentes |
+| `software-firmware` | Versões, SDKs, URCaps, changelogs de API |
+| `dados-geometricos` | CAD/STEP/URDF, envelope de trabalho |
+| `normas-regulamentacoes` | ISO, IEC, ABNT — identificação e escopo, sem interpretação |
+| `desempenho-ensaio` | Resultados de medição com método e condições (base ISO 9283) |
+| `conformidade-certificados` | Certificados e declarações de conformidade emitidos |
+| `solucoes-mercado` | Produtos disponíveis no mercado por função (COTS) |
+| `fornecedores-integradores` | Quem projeta, revende, integra ou suporta |
+| `casos-aplicacao` | Registros descritivos de instalações reais — sem análise |
+| `processos-procedimentos` | Sequências técnicas: calibração, montagem, parametrização |
+| `literatura-tecnica` | Índice de existência de publicações — sem síntese |
+| `dados-layout-infraestrutura` | Área, pontos de fixação, cargas de piso, infraestrutura |
+| `dados-seguranca-funcionais` | Zonas de segurança, PL, SIL, parâmetros de parada |
+| `dados-conectividade-comunicacao` | Redes, protocolos, endereçamento, OPC UA, fieldbus |
+| `modelos-interoperabilidade` | Esquemas ISO 10303/EXPRESS, estruturas de dados eCl@ss |
+
+### Dimensão 2 — Containers
+
+| Tag | Descrição |
+|---|---|
+| `ficha-tecnica` | Folha de um único componente — profunda e rastreável |
+| `tabela-comparativa` | Múltiplos itens lado a lado — sem ranking ou conclusão |
+| `catalogo-solucoes` | Índice da oferta de mercado agrupado por função |
+| `inventario-normas` | Lista estruturada de normas com status e escopo |
+| `repositorio-referencias` | Biblioteca de metadados de fontes consultadas |
+| `planilha-dados-brutos` | Medições ou logs antes de qualquer processamento |
+| `mapa-fornecedores` | Quem entrega/suporta cada item ou função |
+| `dossier-interface` | Container relacional para dados entre dois objetos |
+| `registro-ensaios` | Medições com método, setup e condições documentadas |
+| `caderno-procedimentos` | Coleção indexada de procedimentos reutilizáveis |
+| `conformidade-regulatoria` | Evidência documental de conformidade legal |
+| `dossie-tecnico-tdp` | Meta-container para pacote de dados de sistema completo |
+| `registro-conflitos` | **Transversal** — sempre criado quando há conflito ou lacuna |
+
+---
+
+## Princípios de qualidade
+
+**Fonte ≠ Container.**
+O datasheet OEM é fonte. A ficha técnica interna é container derivado. A pipeline extrai o tipo de dado correto para o container correto, preservando ponteiros de proveniência (documento, revisão, página, data).
+
+**A IA nunca resolve conflitos.**
+Quando duas fontes divergem, ambos os valores são preservados com fonte, data e contexto individuais. Um `registro-conflitos` é criado. Status do campo: `conflito`. A IA não escolhe, não media, não estima.
+
+**Dados ausentes recebem `NULL-MISSING`.**
+Nunca campo em branco. O log registra quais fontes foram consultadas e não retornaram o dado.
+
+**Estados de qualidade dos campos:**
+`confirmado` | `nao-encontrado` | `nao-verificavel` | `conflito` | `obsoleto` | `nao-aplicavel`
+
+**Completude em três níveis (ISO 8000):**
+1. *Atributo* — campos críticos preenchidos
+2. *Metadado* — cada valor tem unidade e fonte (per IEC 62720)
+3. *Identificação* — part number em formato padronizado (per ISO 8000-115)
