@@ -30,7 +30,7 @@ Este repositório não é um produto nem uma biblioteca de código genérico. É
 | **Executor** | Qwen 2.5 Coder 32B | `/tools/` → coleta e estrutura os dados conforme brief do Ordenador |
 | **Supervisor** | Gemini Flash 3 | `/standards/containers/` → valida rastreabilidade, completude e formato; sinaliza conflitos sem resolvê-los |
 
-Custo: apenas modelos < $1/M tokens são usados na pipeline automática.
+Custo e política de modelos: ver `standards/agents/model-policy.md`. A regra geral é <$1/M tokens; existe exceção documentada para o Supervisor em tarefas críticas.
 
 ---
 
@@ -91,6 +91,7 @@ O Ordenador lê os dois templates correspondentes antes de construir o brief. As
 | `conformidade-regulatoria` | Evidência documental de conformidade legal |
 | `dossie-tecnico-tdp` | Meta-container para pacote de dados de sistema completo |
 | `registro-conflitos` | **Transversal** — sempre criado quando há conflito ou lacuna |
+| `evidence-pack` | Pacote completo de uma execução (dossier + referências + lacunas + conflitos + metadados) |
 
 ---
 

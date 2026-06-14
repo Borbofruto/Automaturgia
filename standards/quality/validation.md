@@ -116,11 +116,24 @@ Após 2 tentativas sem aprovação, ou quando:
 
 ---
 
-## Score de aprovação
+## Score de aprovação por nível de maturidade
+
+O score mínimo de aprovação varia conforme o `maturity_target` declarado no `execution_brief`. Ver `standards/core/maturity-levels.md` para a definição completa de cada nível.
+
+| Nível de maturidade | Score mínimo | Decisão abaixo do mínimo |
+|---|---|---|
+| `exploratory` | 0.50 | Retry ou escalação |
+| `documented` | 0.70 | Retry com feedback específico |
+| `verified` | 0.85 | Retry (busca adicional + 2ª fonte) |
+| `measured` | 0.90 | Retry (método + condições incompletos) |
+| `validated` | N/A | Revisão humana obrigatória |
+
+**Regra padrão:** quando `maturity_target` não estiver declarado, usar limiar de `documented` (0.70).
+
+### Tabela de decisão (independente do nível)
 
 | Score | Decisão |
 |---|---|
-| 0.90 – 1.00 | Aprovado → Google Drive |
-| 0.70 – 0.89 | Retry com feedback específico |
-| 0.50 – 0.69 | Retry (pode requerer busca adicional) |
-| < 0.50 | Escalação para Gabriel |
+| ≥ limiar do nível | Aprovado → Google Drive |
+| limiar − 0.15 até limiar | Retry com feedback específico |
+| < limiar − 0.15 | Escalação para Gabriel |

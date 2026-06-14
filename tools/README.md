@@ -71,3 +71,19 @@ Saída:    caminho do arquivo .xlsx gerado
 | conformidade-regulatoria | PDF | generate_pdf |
 | dossie-tecnico-tdp | PDF | generate_pdf |
 | registro-conflitos | XLSX | generate_xlsx |
+| evidence-pack | PDF | generate_pdf |
+
+---
+
+## Contratos de ferramenta
+
+Cada ferramenta tem um contrato completo em `tools/contracts/`:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `web_search.contract.md` | Input/output, modos de falha, ambiente, chamadores permitidos |
+| `generate_pdf.contract.md` | Input/output, modos de falha, ambiente, destino |
+| `generate_docx.contract.md` | Input/output, modos de falha, quando usar vs PDF |
+| `generate_xlsx.contract.md` | Input/output, estrutura de sheets, modos de falha |
+
+O Executor deve consultar o contrato da ferramenta antes da primeira chamada em cada execução.

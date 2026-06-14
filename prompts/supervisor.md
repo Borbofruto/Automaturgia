@@ -63,6 +63,9 @@ Retorne SEMPRE este JSON:
   ],
 
   "overall_approved": true/false,
+  "maturity_target": "exploratory | documented | verified | measured | validated",
+  "maturity_achieved": "exploratory | documented | verified | measured | validated",
+  "maturity_gap": "Descrição específica do que impede atingir o nível alvo (null se atingido)",
   "recommended_action": "proceed | retry_format | retry_content | escalate",
   "retry_instructions": "Instrução específica para o Executor: o que corrigir, o que manter",
   "feedback_summary": "Resumo em 2-3 frases do que está correto e o que precisa melhorar"
