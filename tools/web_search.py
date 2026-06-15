@@ -1,5 +1,5 @@
 """
-web_search.py — Ferramenta de busca na internet para o Executor da Automaturge.
+web_search.py — Ferramenta de busca na internet para o Executor da Automaturgia.
 
 Usa DuckDuckGo (sem API key) como backend primário.
 Para resultados mais ricos, configure SERPER_API_KEY no ambiente.
@@ -22,7 +22,7 @@ def search_duckduckgo(query: str, max_results: int = 5) -> list[dict]:
     encoded = urllib.parse.quote_plus(query)
     url = f"https://api.duckduckgo.com/?q={encoded}&format=json&no_html=1&skip_disambig=1"
 
-    req = urllib.request.Request(url, headers={"User-Agent": "Automaturge/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "Automaturgia/1.0"})
     with urllib.request.urlopen(req, timeout=10) as resp:
         data = json.loads(resp.read().decode())
 
@@ -107,7 +107,7 @@ def format_for_agent(results: list[dict]) -> str:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Automaturge Web Search Tool")
+    parser = argparse.ArgumentParser(description="Automaturgia Web Search Tool")
     parser.add_argument("query", help="Consulta de busca")
     parser.add_argument("--max", type=int, default=5, help="Número máximo de resultados")
     parser.add_argument("--format", choices=["text", "json"], default="text")

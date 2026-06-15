@@ -14,7 +14,7 @@ Converte conteúdo Markdown estruturado em arquivo PDF formatado e o armazena no
 | `filename` | string | sim | Nome do arquivo de saída (sem extensão — .pdf adicionado automaticamente) |
 | `destination` | string | sim | Caminho de destino (Google Drive path ou pasta local mapeada) |
 | `title` | string | não | Título do documento para metadados do PDF |
-| `author` | string | não | Autor para metadados (padrão: "Automaturge") |
+| `author` | string | não | Autor para metadados (padrão: "Automaturgia") |
 
 ---
 
@@ -66,7 +66,7 @@ Converte conteúdo Markdown estruturado em arquivo PDF formatado e o armazena no
 ## Destino do output
 
 Arquivo PDF gravado em:
-- Google Drive: `/Automaturge/Execuções/[AAAA-MM]/[task-id]/`
+- Google Drive: `/Automaturgia/Execuções/[AAAA-MM]/[task-id]/`
 - Nome padrão: `[container]_[task-id]_[AAAAMMDD].pdf`
 
 O `file_path` retornado deve ser registrado no cabeçalho do evidence-pack.

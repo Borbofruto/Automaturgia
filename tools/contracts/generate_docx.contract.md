@@ -14,7 +14,7 @@ Converte conteúdo Markdown estruturado em arquivo Word (.docx) e o armazena no 
 | `filename` | string | sim | Nome do arquivo de saída (sem extensão — .docx adicionado automaticamente) |
 | `destination` | string | sim | Caminho de destino (Google Drive path ou pasta local mapeada) |
 | `title` | string | não | Título para propriedades do documento |
-| `author` | string | não | Autor para propriedades (padrão: "Automaturge") |
+| `author` | string | não | Autor para propriedades (padrão: "Automaturgia") |
 
 ---
 
@@ -64,7 +64,7 @@ Converte conteúdo Markdown estruturado em arquivo Word (.docx) e o armazena no 
 ## Destino do output
 
 Arquivo DOCX gravado em:
-- Google Drive: `/Automaturge/Execuções/[AAAA-MM]/[task-id]/`
+- Google Drive: `/Automaturgia/Execuções/[AAAA-MM]/[task-id]/`
 - Nome padrão: `[container]_[task-id]_[AAAAMMDD].docx`
 
 ---

@@ -1,4 +1,4 @@
-# Política de Modelos e Custo — Automaturge
+# Política de Modelos e Custo — Automaturgia
 
 Define quais modelos são permitidos por função na pipeline, o teto de custo e as condições de exceção. Este documento resolve explicitamente qualquer contradição entre o README e os prompts individuais dos agentes.
 

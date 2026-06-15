@@ -1,6 +1,6 @@
-# Princípios Fundamentais — Automaturge
+# Princípios Fundamentais — Automaturgia
 
-Este documento define os princípios que governam toda a operação da Automaturge. Ele deve ser lido pelo Ordenador antes de qualquer execução e serve como referência para o Supervisor na validação.
+Este documento define os princípios que governam toda a operação da Automaturgia. Ele deve ser lido pelo Ordenador antes de qualquer execução e serve como referência para o Supervisor na validação.
 
 ---
 
@@ -16,11 +16,11 @@ A pipeline extrai dados de fontes e os deposita em containers. Ela não cria dad
 
 ## 2. A IA reúne dados. Não produz estudos.
 
-A Automaturge automatiza coleta, extração e organização de evidências técnicas. Não produz conclusões, interpretações, recomendações ou avaliações de adequação.
+A Automaturgia automatiza coleta, extração e organização de evidências técnicas. Não produz conclusões, interpretações, recomendações ou avaliações de adequação.
 
 > "Uma pesquisa reúne dados. Um estudo conclui algo."
 
-O estudo é trabalho posterior ao dossier — feito por humanos, com base no que a Automaturge coletou.
+O estudo é trabalho posterior ao dossier — feito por humanos, com base no que a Automaturgia coletou.
 
 ---
 

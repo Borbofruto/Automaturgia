@@ -1,0 +1,594 @@
+{
+  "name": "Automaturgia — Pipeline Principal",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "versionId": "automaturge-v1",
+  "nodes": [
+    {
+      "id": "01",
+      "name": "ClickUp — Trigger",
+      "type": "n8n-nodes-base.clickupTrigger",
+      "typeVersion": 1,
+      "position": [0, 300],
+      "webhookId": "automaturge-pipeline-v1",
+      "parameters": {
+        "events": ["taskStatusUpdated"]
+      },
+      "credentials": {
+        "clickUpApi": {
+          "id": "CREDENTIAL_CLICKUP_ID",
+          "name": "ClickUp API"
+        }
+      }
+    },
+    {
+      "id": "02",
+      "name": "Filtrar Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.task_status?.status?.toLowerCase() }}",
+              "rightValue": "processando",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "caseSensitive": false
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "03",
+      "name": "Extrair Tags",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300],
+      "parameters": {
+        "jsCode": "const TIPOS = new Set(['parametros-componente','interfaces-compatibilidade','software-firmware','dados-geometricos','normas-regulamentacoes','desempenho-ensaio','conformidade-certificados','solucoes-mercado','fornecedores-integradores','casos-aplicacao','processos-procedimentos','literatura-tecnica','dados-layout-infraestrutura','dados-seguranca-funcionais','dados-conectividade-comunicacao','modelos-interoperabilidade']);\nconst CONTAINERS = new Set(['ficha-tecnica','tabela-comparativa','catalogo-solucoes','inventario-normas','repositorio-referencias','planilha-dados-brutos','mapa-fornecedores','dossier-interface','registro-ensaios','caderno-procedimentos','conformidade-regulatoria','dossie-tecnico-tdp','registro-conflitos','evidence-pack']);\n\nconst task = $input.item.json;\nconst rawTags = (task.tags || []).map(t => (t.name || t).toLowerCase().trim());\n\nconst tipo_dado = rawTags.find(t => TIPOS.has(t));\nconst container = rawTags.find(t => CONTAINERS.has(t));\n\nif (!tipo_dado) throw new Error('Tag tipo_dado nao encontrada. Tags presentes: ' + rawTags.join(', '));\nif (!container) throw new Error('Tag container nao encontrada. Tags presentes: ' + rawTags.join(', '));\n\nreturn [{\n  json: {\n    task_id: task.id,\n    task_name: (task.name || task.text_content || 'tarefa').slice(0, 80),\n    task_description: task.description || task.text_content || task.markdown_description || '',\n    tipo_dado,\n    container,\n    started_at: new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "04",
+      "name": "Buscar Recursos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300],
+      "parameters": {
+        "jsCode": "const BASE = 'https://raw.githubusercontent.com/Borbofruto/Automaturge/main';\nconst { tipo_dado, container } = $json;\n\nconst get = async (path) => {\n  const r = await $helpers.httpRequest({ method: 'GET', url: BASE + path });\n  return typeof r === 'string' ? r : JSON.stringify(r);\n};\n\nconst [templateTipo, templateContainer, promptOrderer, promptExecutor, promptSupervisor] = await Promise.all([\n  get('/standards/data-types/' + tipo_dado + '.md'),\n  get('/standards/containers/' + container + '.md'),\n  get('/prompts/orderer.md'),\n  get('/prompts/executor.md'),\n  get('/prompts/supervisor.md')\n]);\n\n// Extrai conteudo entre o primeiro bloco de codigo markdown (``` ... ```)\nconst extractPrompt = (md) => {\n  const match = md.match(/^```[^\\n]*\\n([\\s\\S]*?)\\n```/m);\n  return match ? match[1].trim() : md.trim();\n};\n\nreturn [{\n  json: {\n    ...$json,\n    template_tipo_dado: templateTipo,\n    template_container: templateContainer,\n    prompt_orderer: extractPrompt(promptOrderer),\n    prompt_executor: extractPrompt(promptExecutor),\n    prompt_supervisor: extractPrompt(promptSupervisor)\n  }\n}];"
+      }
+    },
+    {
+      "id": "05",
+      "name": "Montar Input Ordenador",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300],
+      "parameters": {
+        "jsCode": "const d = $json;\n\nconst userMessage = 'TAREFA:\\n' + d.task_description +\n  '\\n\\nCONFIGURACAO:\\n- tipo_dado: ' + d.tipo_dado +\n  '\\n- container: ' + d.container +\n  '\\n\\nTEMPLATE TIPO DE DADO (' + d.tipo_dado + '):\\n' + d.template_tipo_dado +\n  '\\n\\nTEMPLATE CONTAINER (' + d.container + '):\\n' + d.template_container;\n\nreturn [{ json: { ...$json, orderer_user_message: userMessage } }];"
+      }
+    },
+    {
+      "id": "06",
+      "name": "Chamar Ordenador",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1100, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.OPENROUTER_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "HTTP-Referer", "value": "https://github.com/Borbofruto/Automaturge" },
+            { "name": "X-Title", "value": "Automaturgia Ordenador" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ JSON.stringify({ model: 'deepseek/deepseek-chat', messages: [{ role: 'system', content: $('Buscar Recursos').item.json.prompt_orderer }, { role: 'user', content: $json.orderer_user_message }], max_tokens: 4096, temperature: 0.1, response_format: { type: 'json_object' } }) }}",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "json" }
+          }
+        }
+      }
+    },
+    {
+      "id": "07",
+      "name": "Parsear Briefs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 300],
+      "parameters": {
+        "jsCode": "const prev = $('Montar Input Ordenador').item.json;\nconst resp = $input.item.json;\n\nlet parsed;\ntry {\n  const content = resp.choices[0].message.content;\n  parsed = typeof content === 'string' ? JSON.parse(content) : content;\n} catch(e) {\n  throw new Error('Ordenador nao retornou JSON valido: ' + e.message);\n}\n\nif (!parsed.execution_brief) throw new Error('execution_brief ausente na resposta do Ordenador');\nif (!parsed.validation_brief) throw new Error('validation_brief ausente na resposta do Ordenador');\n\nreturn [{\n  json: {\n    ...prev,\n    execution_brief: parsed.execution_brief,\n    validation_brief: parsed.validation_brief,\n    tokens_ordenador: resp.usage?.total_tokens || 0\n  }\n}];"
+      }
+    },
+    {
+      "id": "08",
+      "name": "Executar Buscas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 300],
+      "parameters": {
+        "jsCode": "const { execution_brief } = $json;\nconst queries = execution_brief.search_queries || [];\nconst apiKey = $env.SERPER_API_KEY;\n\nif (!apiKey || queries.length === 0) {\n  return [{ json: { ...$json, search_results: [], search_formatted: '(sem resultados de busca — SERPER_API_KEY nao configurada ou sem queries)' } }];\n}\n\nconst results = [];\nfor (const query of queries.slice(0, 8)) {\n  try {\n    const resp = await $helpers.httpRequest({\n      method: 'POST',\n      url: 'https://google.serper.dev/search',\n      headers: { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' },\n      body: JSON.stringify({ q: query, num: 5 })\n    });\n    const data = typeof resp === 'string' ? JSON.parse(resp) : resp;\n    results.push({\n      query,\n      results: (data.organic || []).slice(0, 5).map(r => ({ title: r.title, url: r.link, snippet: r.snippet }))\n    });\n  } catch(e) {\n    results.push({ query, results: [], error: e.message });\n  }\n}\n\nconst formatted = results.map(r => {\n  const items = r.error\n    ? '  ERRO: ' + r.error\n    : r.results.map((i, idx) => '  [' + (idx+1) + '] ' + i.title + '\\n      URL: ' + i.url + '\\n      ' + i.snippet).join('\\n');\n  return 'QUERY: \"' + r.query + '\"\\n' + (items || '  Sem resultados');\n}).join('\\n\\n');\n\nreturn [{ json: { ...$json, search_results: results, search_formatted: formatted } }];"
+      }
+    },
+    {
+      "id": "09a",
+      "name": "Chamar Executor 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1760, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.OPENROUTER_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "HTTP-Referer", "value": "https://github.com/Borbofruto/Automaturge" },
+            { "name": "X-Title", "value": "Automaturgia Executor" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ JSON.stringify({ model: 'qwen/qwen-2.5-coder-32b-instruct', messages: [{ role: 'system', content: $('Buscar Recursos').item.json.prompt_executor }, { role: 'user', content: 'EXECUTION BRIEF:\\n' + JSON.stringify($json.execution_brief, null, 2) + '\\n\\nRESULTADOS DE BUSCA:\\n' + ($json.search_formatted || '(nenhum)') }], max_tokens: 8192, temperature: 0.1, response_format: { type: 'json_object' } }) }}",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "json" }
+          }
+        }
+      }
+    },
+    {
+      "id": "10a",
+      "name": "Parsear Executor 1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1980, 300],
+      "parameters": {
+        "jsCode": "const prev = $('Executar Buscas').item.json;\nconst resp = $input.item.json;\n\nlet parsed;\ntry {\n  const content = resp.choices[0].message.content;\n  parsed = typeof content === 'string' ? JSON.parse(content) : content;\n} catch(e) {\n  throw new Error('Executor 1 nao retornou JSON valido: ' + e.message);\n}\n\nreturn [{\n  json: {\n    ...prev,\n    executor_output: parsed,\n    current_attempt: 1,\n    tokens_executor: resp.usage?.total_tokens || 0\n  }\n}];"
+      }
+    },
+    {
+      "id": "11a",
+      "name": "Chamar Supervisor 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2200, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.OPENROUTER_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "HTTP-Referer", "value": "https://github.com/Borbofruto/Automaturge" },
+            { "name": "X-Title", "value": "Automaturgia Supervisor" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ JSON.stringify({ model: 'google/gemini-flash-3-preview', messages: [{ role: 'system', content: $('Buscar Recursos').item.json.prompt_supervisor }, { role: 'user', content: 'VALIDATION BRIEF:\\n' + JSON.stringify($json.validation_brief, null, 2) + '\\n\\nEXECUTOR OUTPUT:\\n' + JSON.stringify($json.executor_output, null, 2) }], max_tokens: 2048, temperature: 0.1, response_format: { type: 'json_object' } }) }}",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "json" }
+          }
+        }
+      }
+    },
+    {
+      "id": "12a",
+      "name": "Parsear Supervisao 1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2420, 300],
+      "parameters": {
+        "jsCode": "const prev = $('Parsear Executor 1').item.json;\nconst resp = $input.item.json;\n\nlet validation;\ntry {\n  const content = resp.choices[0].message.content;\n  validation = typeof content === 'string' ? JSON.parse(content) : content;\n} catch(e) {\n  throw new Error('Supervisor 1 nao retornou JSON valido: ' + e.message);\n}\n\nreturn [{\n  json: {\n    ...prev,\n    validation: validation,\n    tokens_supervisor: resp.usage?.total_tokens || 0\n  }\n}];"
+      }
+    },
+    {
+      "id": "13a",
+      "name": "Aprovado Tentativa 1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2640, 300],
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.validation.overall_approved }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "14",
+      "name": "Escalar ou Retry",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2860, 460],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.validation.recommended_action }}",
+              "rightValue": "escalate",
+              "operator": { "type": "string", "operation": "equals", "caseSensitive": false }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "15",
+      "name": "Preparar Retry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3080, 560],
+      "parameters": {
+        "jsCode": "const prev = $input.item.json;\nconst retryInstructions = prev.validation.retry_instructions || 'Revisar e melhorar o output anterior.';\n\nconst updatedBrief = {\n  ...prev.execution_brief,\n  specific_instructions: prev.execution_brief.specific_instructions +\n    '\\n\\n--- RETRY (Tentativa 1 rejeitada pelo Supervisor) ---\\n' +\n    retryInstructions +\n    '\\n\\nOutput da tentativa 1 para referencia:\\n' +\n    JSON.stringify(prev.executor_output, null, 2)\n};\n\nreturn [{\n  json: {\n    ...prev,\n    execution_brief: updatedBrief,\n    current_attempt: 2\n  }\n}];"
+      }
+    },
+    {
+      "id": "09b",
+      "name": "Chamar Executor 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3300, 560],
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.OPENROUTER_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "HTTP-Referer", "value": "https://github.com/Borbofruto/Automaturge" },
+            { "name": "X-Title", "value": "Automaturgia Executor Retry" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ JSON.stringify({ model: 'qwen/qwen-2.5-coder-32b-instruct', messages: [{ role: 'system', content: $('Buscar Recursos').item.json.prompt_executor }, { role: 'user', content: 'EXECUTION BRIEF (RETRY - TENTATIVA 2):\\n' + JSON.stringify($json.execution_brief, null, 2) + '\\n\\nRESULTADOS DE BUSCA (reutilizados da tentativa 1):\\n' + ($('Executar Buscas').item.json.search_formatted || '(nenhum)') }], max_tokens: 8192, temperature: 0.1, response_format: { type: 'json_object' } }) }}",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "json" }
+          }
+        }
+      }
+    },
+    {
+      "id": "10b",
+      "name": "Parsear Executor 2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3520, 560],
+      "parameters": {
+        "jsCode": "const prev = $('Preparar Retry').item.json;\nconst resp = $input.item.json;\n\nlet parsed;\ntry {\n  const content = resp.choices[0].message.content;\n  parsed = typeof content === 'string' ? JSON.parse(content) : content;\n} catch(e) {\n  throw new Error('Executor 2 nao retornou JSON valido: ' + e.message);\n}\n\nreturn [{\n  json: {\n    ...prev,\n    executor_output: parsed,\n    current_attempt: 2\n  }\n}];"
+      }
+    },
+    {
+      "id": "11b",
+      "name": "Chamar Supervisor 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3740, 560],
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.OPENROUTER_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "HTTP-Referer", "value": "https://github.com/Borbofruto/Automaturge" },
+            { "name": "X-Title", "value": "Automaturgia Supervisor Retry" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ JSON.stringify({ model: 'google/gemini-flash-3-preview', messages: [{ role: 'system', content: $('Buscar Recursos').item.json.prompt_supervisor }, { role: 'user', content: 'VALIDATION BRIEF:\\n' + JSON.stringify($('Parsear Briefs').item.json.validation_brief, null, 2) + '\\n\\nEXECUTOR OUTPUT (TENTATIVA 2):\\n' + JSON.stringify($json.executor_output, null, 2) }], max_tokens: 2048, temperature: 0.1, response_format: { type: 'json_object' } }) }}",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "json" }
+          }
+        }
+      }
+    },
+    {
+      "id": "12b",
+      "name": "Parsear Supervisao 2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3960, 560],
+      "parameters": {
+        "jsCode": "const prev = $('Parsear Executor 2').item.json;\nconst resp = $input.item.json;\n\nlet validation;\ntry {\n  const content = resp.choices[0].message.content;\n  validation = typeof content === 'string' ? JSON.parse(content) : content;\n} catch(e) {\n  throw new Error('Supervisor 2 nao retornou JSON valido: ' + e.message);\n}\n\nreturn [{\n  json: {\n    ...prev,\n    validation: validation\n  }\n}];"
+      }
+    },
+    {
+      "id": "13b",
+      "name": "Aprovado Tentativa 2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [4180, 560],
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.validation.overall_approved }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "20",
+      "name": "Preparar Documento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2860, 100],
+      "parameters": {
+        "jsCode": "const output = $json.executor_output || {};\nconst content = output.content || '(sem conteudo)';\nconst filename = output.output_filename || ($json.task_name.replace(/[^a-zA-Z0-9_-]/g, '_') + '_' + new Date().toISOString().slice(0,10) + '.md');\n\n// Monta documento completo com anexos\nlet fullDoc = content;\n\nif (output.repositorio_referencias?.length) {\n  fullDoc += '\\n\\n---\\n\\n## Repositorio de Referencias\\n\\n';\n  fullDoc += output.repositorio_referencias.map(r =>\n    '[' + r.id + '] **' + r.titulo + '**\\n' +\n    '- Tipo: ' + r.tipo + '\\n' +\n    '- URL: ' + r.url + '\\n' +\n    '- Acesso: ' + r.data_acesso + '\\n' +\n    '- Status: ' + r.status\n  ).join('\\n\\n');\n}\n\nif (output.registro_conflitos?.length) {\n  fullDoc += '\\n\\n---\\n\\n## Registro de Conflitos\\n\\n';\n  fullDoc += output.registro_conflitos.map(c =>\n    '**' + c.id + '** — ' + c.campo + '\\n' +\n    '- Valor A: ' + c.valor_a + '\\n' +\n    '- Valor B: ' + c.valor_b + '\\n' +\n    '- Tipo: ' + c.tipo\n  ).join('\\n\\n');\n}\n\nif (output.null_missing?.length) {\n  fullDoc += '\\n\\n---\\n\\n## Campos NULL-MISSING\\n\\n';\n  fullDoc += output.null_missing.map(n => '- ' + n).join('\\n');\n}\n\n// Relatorio do Supervisor\nconst v = $json.validation || {};\nfullDoc += '\\n\\n---\\n\\n## Relatorio do Supervisor\\n\\n' +\n  '- Score: ' + (v.content_score || 'N/A') + '\\n' +\n  '- Maturidade alvo: ' + (v.maturity_target || 'N/A') + '\\n' +\n  '- Maturidade atingida: ' + (v.maturity_achieved || 'N/A') + '\\n' +\n  '- Tentativa: ' + ($json.current_attempt || 1) + '\\n\\n' +\n  (v.feedback_summary || '');\n\nconst buffer = Buffer.from(fullDoc, 'utf-8');\n\nreturn [{\n  json: { ...$json, upload_filename: filename },\n  binary: {\n    data: {\n      data: buffer.toString('base64'),\n      mimeType: 'text/markdown',\n      fileName: filename\n    }\n  }\n}];"
+      }
+    },
+    {
+      "id": "21",
+      "name": "Upload Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [3080, 100],
+      "parameters": {
+        "operation": "upload",
+        "name": "={{ $json.upload_filename }}",
+        "parents": ["GDRIVE_FOLDER_ID_DOSSIES"],
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CREDENTIAL_GDRIVE_ID",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "id": "22",
+      "name": "ClickUp Concluido",
+      "type": "n8n-nodes-base.clickup",
+      "typeVersion": 1,
+      "position": [3300, 100],
+      "parameters": {
+        "resource": "task",
+        "operation": "update",
+        "id": "={{ $('Extrair Tags').item.json.task_id }}",
+        "updateFields": {
+          "status": "concluído"
+        }
+      },
+      "credentials": {
+        "clickUpApi": {
+          "id": "CREDENTIAL_CLICKUP_ID",
+          "name": "ClickUp API"
+        }
+      }
+    },
+    {
+      "id": "23",
+      "name": "Comentario Aprovacao",
+      "type": "n8n-nodes-base.clickup",
+      "typeVersion": 1,
+      "position": [3520, 100],
+      "parameters": {
+        "resource": "taskComment",
+        "operation": "create",
+        "task": "={{ $('Extrair Tags').item.json.task_id }}",
+        "comment": "={{ '✅ Pipeline concluído — Tentativa ' + $json.current_attempt + '\\n\\nScore: ' + $json.validation.content_score + ' | Maturidade: ' + $json.validation.maturity_achieved + '\\n\\n' + ($json.validation.feedback_summary || '') }}"
+      },
+      "credentials": {
+        "clickUpApi": {
+          "id": "CREDENTIAL_CLICKUP_ID",
+          "name": "ClickUp API"
+        }
+      }
+    },
+    {
+      "id": "24",
+      "name": "ClickUp Revisao Humana",
+      "type": "n8n-nodes-base.clickup",
+      "typeVersion": 1,
+      "position": [3080, 360],
+      "parameters": {
+        "resource": "task",
+        "operation": "update",
+        "id": "={{ $('Extrair Tags').item.json.task_id }}",
+        "updateFields": {
+          "status": "revisão humana"
+        }
+      },
+      "credentials": {
+        "clickUpApi": {
+          "id": "CREDENTIAL_CLICKUP_ID",
+          "name": "ClickUp API"
+        }
+      }
+    },
+    {
+      "id": "25",
+      "name": "Comentario Escalada",
+      "type": "n8n-nodes-base.clickup",
+      "typeVersion": 1,
+      "position": [3300, 360],
+      "parameters": {
+        "resource": "taskComment",
+        "operation": "create",
+        "task": "={{ $('Extrair Tags').item.json.task_id }}",
+        "comment": "={{ '⚠️ Pipeline escalado para revisão humana\\n\\nMotivo: ' + ($json.validation.maturity_gap || $json.validation.feedback_summary || 'Ver detalhes da supervisão') + '\\n\\nAção sugerida: ' + ($json.validation.retry_instructions || 'Revisar tarefa e reprocessar manualmente') + '\\n\\nTentativa(s) realizadas: ' + ($json.current_attempt || 1) }}"
+      },
+      "credentials": {
+        "clickUpApi": {
+          "id": "CREDENTIAL_CLICKUP_ID",
+          "name": "ClickUp API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "ClickUp — Trigger": {
+      "main": [
+        [{ "node": "Filtrar Status", "type": "main", "index": 0 }]
+      ]
+    },
+    "Filtrar Status": {
+      "main": [
+        [{ "node": "Extrair Tags", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Extrair Tags": {
+      "main": [
+        [{ "node": "Buscar Recursos", "type": "main", "index": 0 }]
+      ]
+    },
+    "Buscar Recursos": {
+      "main": [
+        [{ "node": "Montar Input Ordenador", "type": "main", "index": 0 }]
+      ]
+    },
+    "Montar Input Ordenador": {
+      "main": [
+        [{ "node": "Chamar Ordenador", "type": "main", "index": 0 }]
+      ]
+    },
+    "Chamar Ordenador": {
+      "main": [
+        [{ "node": "Parsear Briefs", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parsear Briefs": {
+      "main": [
+        [{ "node": "Executar Buscas", "type": "main", "index": 0 }]
+      ]
+    },
+    "Executar Buscas": {
+      "main": [
+        [{ "node": "Chamar Executor 1", "type": "main", "index": 0 }]
+      ]
+    },
+    "Chamar Executor 1": {
+      "main": [
+        [{ "node": "Parsear Executor 1", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parsear Executor 1": {
+      "main": [
+        [{ "node": "Chamar Supervisor 1", "type": "main", "index": 0 }]
+      ]
+    },
+    "Chamar Supervisor 1": {
+      "main": [
+        [{ "node": "Parsear Supervisao 1", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parsear Supervisao 1": {
+      "main": [
+        [{ "node": "Aprovado Tentativa 1", "type": "main", "index": 0 }]
+      ]
+    },
+    "Aprovado Tentativa 1": {
+      "main": [
+        [{ "node": "Preparar Documento", "type": "main", "index": 0 }],
+        [{ "node": "Escalar ou Retry", "type": "main", "index": 0 }]
+      ]
+    },
+    "Escalar ou Retry": {
+      "main": [
+        [{ "node": "ClickUp Revisao Humana", "type": "main", "index": 0 }],
+        [{ "node": "Preparar Retry", "type": "main", "index": 0 }]
+      ]
+    },
+    "Preparar Retry": {
+      "main": [
+        [{ "node": "Chamar Executor 2", "type": "main", "index": 0 }]
+      ]
+    },
+    "Chamar Executor 2": {
+      "main": [
+        [{ "node": "Parsear Executor 2", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parsear Executor 2": {
+      "main": [
+        [{ "node": "Chamar Supervisor 2", "type": "main", "index": 0 }]
+      ]
+    },
+    "Chamar Supervisor 2": {
+      "main": [
+        [{ "node": "Parsear Supervisao 2", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parsear Supervisao 2": {
+      "main": [
+        [{ "node": "Aprovado Tentativa 2", "type": "main", "index": 0 }]
+      ]
+    },
+    "Aprovado Tentativa 2": {
+      "main": [
+        [{ "node": "Preparar Documento", "type": "main", "index": 0 }],
+        [{ "node": "ClickUp Revisao Humana", "type": "main", "index": 0 }]
+      ]
+    },
+    "Preparar Documento": {
+      "main": [
+        [{ "node": "Upload Google Drive", "type": "main", "index": 0 }]
+      ]
+    },
+    "Upload Google Drive": {
+      "main": [
+        [{ "node": "ClickUp Concluido", "type": "main", "index": 0 }]
+      ]
+    },
+    "ClickUp Concluido": {
+      "main": [
+        [{ "node": "Comentario Aprovacao", "type": "main", "index": 0 }]
+      ]
+    },
+    "ClickUp Revisao Humana": {
+      "main": [
+        [{ "node": "Comentario Escalada", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

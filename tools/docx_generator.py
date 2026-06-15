@@ -1,5 +1,5 @@
 """
-docx_generator.py — Geração de documentos Word (.docx) para entregas da Automaturge.
+docx_generator.py — Geração de documentos Word (.docx) para entregas da Automaturgia.
 
 Converte conteúdo Markdown em .docx profissional usando python-docx.
 Requer: pip install python-docx markdown
@@ -16,7 +16,7 @@ import argparse
 from datetime import datetime
 
 
-def parse_markdown_to_docx(markdown_content: str, output_path: str, title: str = "", author: str = "Automaturge") -> str:
+def parse_markdown_to_docx(markdown_content: str, output_path: str, title: str = "", author: str = "Automaturgia") -> str:
     """Converte Markdown para .docx preservando estrutura de headings, tabelas e listas."""
     try:
         from docx import Document
@@ -38,13 +38,13 @@ def parse_markdown_to_docx(markdown_content: str, output_path: str, title: str =
     doc.core_properties.title = title
     doc.core_properties.author = author
     doc.core_properties.created = datetime.now()
-    doc.core_properties.comments = "Gerado pelo pipeline Automaturge"
+    doc.core_properties.comments = "Gerado pelo pipeline Automaturgia"
 
     # Título da capa
     if title:
         title_para = doc.add_heading(title, level=0)
         title_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph(f"Automaturge · Research & Methods for Applied Robotics")
+        doc.add_paragraph(f"Automaturgia · Research & Methods for Applied Robotics")
         doc.add_paragraph(datetime.now().strftime("%d/%m/%Y"))
         doc.add_page_break()
 
@@ -139,7 +139,7 @@ def parse_markdown_to_docx(markdown_content: str, output_path: str, title: str =
     return output_path
 
 
-def generate(content_markdown: str, output_path: str, title: str = "", author: str = "Automaturge") -> str:
+def generate(content_markdown: str, output_path: str, title: str = "", author: str = "Automaturgia") -> str:
     """
     Ponto de entrada principal.
 
@@ -147,7 +147,7 @@ def generate(content_markdown: str, output_path: str, title: str = "", author: s
         content_markdown: Conteúdo em Markdown
         output_path:      Caminho .docx de saída
         title:            Título do documento
-        author:           Autor (padrão: Automaturge)
+        author:           Autor (padrão: Automaturgia)
 
     Returns:
         Caminho do arquivo .docx gerado
@@ -156,12 +156,12 @@ def generate(content_markdown: str, output_path: str, title: str = "", author: s
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Automaturge DOCX Generator")
+    parser = argparse.ArgumentParser(description="Automaturgia DOCX Generator")
     parser.add_argument("--input", help="Arquivo .md de entrada")
     parser.add_argument("--content", help="Conteúdo Markdown direto")
     parser.add_argument("--output", required=True, help="Arquivo .docx de saída")
     parser.add_argument("--title", default="", help="Título do documento")
-    parser.add_argument("--author", default="Automaturge", help="Autor")
+    parser.add_argument("--author", default="Automaturgia", help="Autor")
     args = parser.parse_args()
 
     if args.input:

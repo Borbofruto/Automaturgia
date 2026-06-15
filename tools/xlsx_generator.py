@@ -1,5 +1,5 @@
 """
-xlsx_generator.py — Geração de planilhas Excel (.xlsx) para entregas da Automaturge.
+xlsx_generator.py — Geração de planilhas Excel (.xlsx) para entregas da Automaturgia.
 
 Ideal para: parâmetros técnicos tabulados, datasets de benchmarks, comparações numéricas.
 Requer: pip install openpyxl
@@ -33,7 +33,7 @@ def generate(
     sheets: dict[str, list[dict]],
     output_path: str,
     title: str = "",
-    author: str = "Automaturge"
+    author: str = "Automaturgia"
 ) -> str:
     """
     Gera planilha .xlsx com uma ou mais abas.
@@ -92,7 +92,7 @@ def generate(
         # Título opcional na primeira linha da primeira aba
         if sheet_idx == 0 and title:
             ws.cell(row=1, column=1, value=title).font = Font(bold=True, size=13)
-            ws.cell(row=2, column=1, value=f"Automaturge · Gerado em {datetime.now().strftime('%d/%m/%Y')}")
+            ws.cell(row=2, column=1, value=f"Automaturgia · Gerado em {datetime.now().strftime('%d/%m/%Y')}")
             ws.cell(row=2, column=1).font = Font(italic=True, color="7F8C8D", size=9)
             ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(headers))
             ws.merge_cells(start_row=2, start_column=1, end_row=2, end_column=len(headers))
@@ -145,7 +145,7 @@ def from_flat_list(rows: list[dict], output_path: str, title: str = "", sheet_na
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Automaturge XLSX Generator")
+    parser = argparse.ArgumentParser(description="Automaturgia XLSX Generator")
     parser.add_argument("--json", help="Arquivo JSON com dados ({ sheet_name: [rows] } ou [rows])")
     parser.add_argument("--output", required=True, help="Arquivo .xlsx de saída")
     parser.add_argument("--title", default="", help="Título da planilha")

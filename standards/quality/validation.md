@@ -1,4 +1,4 @@
-# Critérios de Validação — Supervisor Automaturge
+# Critérios de Validação — Supervisor Automaturgia
 
 O Supervisor usa este documento como base para avaliar outputs do Executor.
 A validação é feita em **duas dimensões independentes**: Formato e Conteúdo.

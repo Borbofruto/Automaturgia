@@ -2,7 +2,7 @@
 
 ## Descrição
 
-O **evidence-pack** é o pacote de saída natural de uma execução da Automaturge. Ele agrega, em um único container auditável, tudo que foi produzido durante uma corrida: o dossier principal, o repositório de referências, os conflitos identificados, as lacunas declaradas e os metadados de execução.
+O **evidence-pack** é o pacote de saída natural de uma execução da Automaturgia. Ele agrega, em um único container auditável, tudo que foi produzido durante uma corrida: o dossier principal, o repositório de referências, os conflitos identificados, as lacunas declaradas e os metadados de execução.
 
 **Não é um produto para o usuário final** — é o registro completo e rastreável do que aconteceu em uma execução, que pode ser revisado, arquivado ou usado como insumo para execuções subsequentes.
 
@@ -111,5 +111,5 @@ Todos os tipos de dado (`tipo-dado/*`). O evidence-pack é agnóstico quanto ao 
 
 ## Armazenamento
 
-Evidence-packs são armazenados no Google Drive no diretório `/Automaturge/Execuções/[AAAA-MM]/[task-id]/`.  
+Evidence-packs são armazenados no Google Drive no diretório `/Automaturgia/Execuções/[AAAA-MM]/[task-id]/`.  
 Nome padrão: `evidence-pack_[task-id]_[AAAAMMDD].md`

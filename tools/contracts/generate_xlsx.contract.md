@@ -89,7 +89,7 @@ Gera arquivo Excel (.xlsx) a partir de dados estruturados. Usado principalmente 
 ## Destino do output
 
 Arquivo XLSX gravado em:
-- Google Drive: `/Automaturge/Execuções/[AAAA-MM]/[task-id]/`
+- Google Drive: `/Automaturgia/Execuções/[AAAA-MM]/[task-id]/`
 - Nome padrão: `[container]_[task-id]_[AAAAMMDD].xlsx`
 
 ---

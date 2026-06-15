@@ -6,7 +6,7 @@ Parâmetros de **segurança funcional** documentados em fontes formais: Performa
 
 Todo dado deste tipo responde à pergunta: "o que foi formalmente documentado sobre a segurança funcional deste sistema ou componente, e por qual fonte?"
 
-Este é o tipo com maior restrição de fonte da Automaturge. Qualquer valor de segurança sem fonte formal documentada recebe `NULL-MISSING` — não existe `nao-verificavel` como substituto para PL ou SIL não documentado.
+Este é o tipo com maior restrição de fonte da Automaturgia. Qualquer valor de segurança sem fonte formal documentada recebe `NULL-MISSING` — não existe `nao-verificavel` como substituto para PL ou SIL não documentado.
 
 ## Critérios de qualidade
 

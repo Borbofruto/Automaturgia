@@ -1,5 +1,5 @@
 """
-pdf_generator.py — Geração de PDF para entregas da Automaturge.
+pdf_generator.py — Geração de PDF para entregas da Automaturgia.
 
 Converte conteúdo Markdown estruturado em PDF profissional.
 Requer: pip install reportlab markdown weasyprint (ou usa pandoc via subprocess)
@@ -16,7 +16,7 @@ import subprocess
 import tempfile
 
 
-def generate_with_pandoc(markdown_content: str, output_path: str, title: str = "", author: str = "Automaturge") -> str:
+def generate_with_pandoc(markdown_content: str, output_path: str, title: str = "", author: str = "Automaturgia") -> str:
     """
     Gera PDF via Pandoc (preferido — suporta LaTeX, tabelas, fórmulas matemáticas).
     Requer: pandoc + pdflatex ou xelatex instalados.
@@ -87,7 +87,7 @@ def generate_with_weasyprint(markdown_content: str, output_path: str, title: str
     code {{ background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: monospace; font-size: 9pt; }}
     pre {{ background: #f4f4f4; padding: 1em; border-radius: 5px; overflow-x: auto; }}
     pre code {{ background: none; padding: 0; }}
-    @page {{ margin: 2.5cm; @bottom-center {{ content: "Automaturge · " attr(title) " · Página " counter(page) " de " counter(pages); font-size: 8pt; color: #7f8c8d; }} }}
+    @page {{ margin: 2.5cm; @bottom-center {{ content: "Automaturgia · " attr(title) " · Página " counter(page) " de " counter(pages); font-size: 8pt; color: #7f8c8d; }} }}
   </style>
 </head>
 <body>
@@ -100,7 +100,7 @@ def generate_with_weasyprint(markdown_content: str, output_path: str, title: str
     return output_path
 
 
-def generate(content_markdown: str, output_path: str, title: str = "", author: str = "Automaturge") -> str:
+def generate(content_markdown: str, output_path: str, title: str = "", author: str = "Automaturgia") -> str:
     """
     Ponto de entrada principal. Tenta Pandoc, cai para WeasyPrint.
 
@@ -108,7 +108,7 @@ def generate(content_markdown: str, output_path: str, title: str = "", author: s
         content_markdown: Conteúdo em Markdown (pode conter tabelas, fórmulas $$..$$)
         output_path:      Caminho de saída (ex: 'relatorio.pdf')
         title:            Título do documento
-        author:           Autor (padrão: Automaturge)
+        author:           Autor (padrão: Automaturgia)
 
     Returns:
         Caminho do arquivo PDF gerado
@@ -127,12 +127,12 @@ def generate(content_markdown: str, output_path: str, title: str = "", author: s
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Automaturge PDF Generator")
+    parser = argparse.ArgumentParser(description="Automaturgia PDF Generator")
     parser.add_argument("--input", help="Arquivo .md de entrada")
     parser.add_argument("--content", help="Conteúdo Markdown direto (alternativa ao --input)")
     parser.add_argument("--output", required=True, help="Arquivo .pdf de saída")
     parser.add_argument("--title", default="", help="Título do documento")
-    parser.add_argument("--author", default="Automaturge", help="Autor")
+    parser.add_argument("--author", default="Automaturgia", help="Autor")
     args = parser.parse_args()
 
     if args.input:

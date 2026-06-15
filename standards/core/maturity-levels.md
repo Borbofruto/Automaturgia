@@ -1,6 +1,6 @@
-# Níveis de Maturidade — Automaturge
+# Níveis de Maturidade — Automaturgia
 
-Todo pacote de evidências produzido pela Automaturge recebe um nível de maturidade declarado. O nível determina o que o Supervisor aceita como aprovado e como o pacote deve ser interpretado por quem o usa.
+Todo pacote de evidências produzido pela Automaturgia recebe um nível de maturidade declarado. O nível determina o que o Supervisor aceita como aprovado e como o pacote deve ser interpretado por quem o usa.
 
 O nível não é uma nota — é uma declaração do estado real dos dados.
 
