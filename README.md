@@ -1,16 +1,16 @@
 # Automaturgia · Research & Methods for Applied Robotics
 
-A **Automaturgia** é uma prática de desenvolvimento de métodos para robótica aplicada.
+A **Automaturgia** é uma iniciativa de *research & methods* para robótica industrial aplicada.
 
-A robótica industrial opera na interseção da mecânica, da elétrica e da computação — três áreas com rigor científico próprio e consolidado. O problema é que essa interseção raramente é tratada como disciplina aplicada em si. Na prática, muitas integrações robóticas ainda são conduzidas por heurística, tentativa e erro e conhecimento tácito de integradores. O conhecimento existe nas áreas componentes; já a metodologia de integração aplicada permanece frequentemente fragmentada, pouco documentada e pouco transferível.
+**Research:** compilação e estruturação sistemática de material técnico existente — organizado pela perspectiva da operação robótica, não da disciplina componente. É o que o pipeline produz: bases técnicas rastreáveis sobre paletização, soldagem, lixamento, inspeção.
 
-A Automaturgia existe para preencher esse vácuo: sistematizar, documentar e tornar reutilizável o conhecimento que hoje ou permanece no mundo acadêmico — preciso, mas muitas vezes distante da aplicação real — ou vive na cabeça do integrador — útil, mas difícil de transmitir. Não é reinventar a roda. É entender formalmente por que a roda funciona, sob quais condições ela falha e como extrair o máximo dela em cada aplicação.
+**Methods:** métodos integrados desenvolvidos a partir dessa base. Um método de paletização que especifica trajetória, carga inercial e limites de segurança articulados não é um paper de mecânica nem de computação — é robótica. Esses métodos não existem de forma sistematizada porque requerem síntese cross-disciplinar; é exatamente aí que a Automaturgia trabalha.
 
-O produto da Automaturgia são métodos: guias práticos e fundamentados sobre como executar tarefas específicas em robótica aplicada, acompanhados dos estudos técnicos que sustentam esses métodos. Para construir esse material, a Automaturgia utiliza um pipeline de agentes de IA para coletar, organizar e estruturar bases técnicas existentes. Essas bases não substituem o estudo técnico; elas servem como embasamento para que estudos posteriores possam fundamentar métodos mais claros, rastreáveis e transferíveis.
+A engenharia robótica tem fundamentos sólidos em mecânica, elétrica e computação. O que falta não é teoria — é organização pela unidade que importa: a operação robótica integrada. Manuais cobrem componentes, papers cobrem disciplinas, integradores cobrem aplicações — mas geralmente só na própria cabeça. A Automaturgia não reinventa a robótica: estrutura o que existe e desenvolve os métodos que a fragmentação disciplinar nunca produziu.
 
-Este repositório contém a infraestrutura do **pipeline de geração de dossiês técnicos** que a Automaturgia usa como etapa de pesquisa. O pipeline automatiza a compilação e estruturação de material técnico existente — normas, datasheets, literatura, especificações — em dossiês rastreáveis que servem de embasamento para os estudos que, por sua vez, fundamentam os métodos que a Automaturgia produz. Os agentes de IA não criam conhecimento, não interpretam, não concluem: reúnem e organizam o que já existe.
+Este repositório contém a infraestrutura do **pipeline de geração de dossiês técnicos** — a camada de *research* da Automaturgia. O pipeline automatiza a compilação e estruturação de material técnico existente — normas, datasheets, literatura, especificações — em dossiês rastreáveis que fundamentam o desenvolvimento de métodos. Os agentes de IA não criam conhecimento, não interpretam, não concluem: reúnem e organizam o que já existe.
 
-É uma ferramenta da Automaturgia — não o produto dela.
+É a ferramenta de *research* da Automaturgia — não o produto dela.
 
 > **O pipeline reúne dados técnicos. A Automaturgia conclui algo com eles.**
 > "Uma pesquisa reúne dados. Um método ensina como usá-los."

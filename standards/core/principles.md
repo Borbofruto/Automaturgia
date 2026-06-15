@@ -14,13 +14,13 @@ A pipeline extrai dados de fontes e os deposita em containers. Ela não cria dad
 
 ---
 
-## 2. A IA reúne dados. Não produz estudos.
+## 2. O pipeline é *research*. Não é *methods*.
 
-A Automaturgia automatiza coleta, extração e organização de evidências técnicas. Não produz conclusões, interpretações, recomendações ou avaliações de adequação.
+O pipeline da Automaturgia automatiza a camada de *research*: coleta, extração e organização de evidências técnicas. Não produz conclusões, interpretações, recomendações ou avaliações de adequação.
 
-> "Uma pesquisa reúne dados. Um estudo conclui algo."
+> "Uma pesquisa reúne dados. Um método ensina como usá-los."
 
-O estudo é trabalho posterior ao dossier — feito por humanos, com base no que a Automaturgia coletou.
+O desenvolvimento de métodos — síntese cross-disciplinar que produz guias aplicados por operação robótica — é trabalho posterior ao dossiê, feito por humanos com base no que o pipeline coletou.
 
 ---
 

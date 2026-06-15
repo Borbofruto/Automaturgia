@@ -1,6 +1,6 @@
 # Pipeline — Setup e Operação
 
-Este diretório contém o workflow n8n que orquestra a execução da Automaturgia de ponta a ponta: da tarefa no ClickUp ao dossiê no Google Drive.
+Este diretório contém o workflow n8n que orquestra a camada de *research* da Automaturgia — da tarefa no ClickUp ao dossiê no Google Drive.
 
 ---
 
