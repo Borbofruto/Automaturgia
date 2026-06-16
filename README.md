@@ -1,5 +1,7 @@
 # Automaturgia · Research & Methods for Applied Robotics
 
+*De automação + dramaturgia — como a dramaturgia sistematizou o ofício da escrita teatral, Automaturgia sistematiza o ofício da integração robótica aplicada.*
+
 A **Automaturgia** é uma iniciativa de *research & methods* para robótica industrial aplicada.
 
 **Research:** compilação e estruturação sistemática de material técnico existente — organizado pela perspectiva da operação robótica, não da disciplina componente. É o que o pipeline produz: bases técnicas rastreáveis sobre paletização, soldagem, lixamento, inspeção.
